@@ -201,7 +201,7 @@ function Player({ poster, src }: Props) {
                         </div>
                     </div>
                 </div>
-                <video onDoubleClick={() => setFullScr(!fullScr)} onClick={() => { setPlaying(!isPlaying) }} ref={videoRef} muted={muted} poster={poster} src={src} contextMenu="false" controlsList="nodownload" className="h-full w-full video_nonFullScr"></video>
+                <video onContextMenu={(event) => { event.preventDefault(); }} onDoubleClick={() => setFullScr(!fullScr)} onClick={() => { setPlaying(!isPlaying) }} ref={videoRef} muted={muted} poster={poster} src={src} contextMenu="false" controlsList="nodownload" className="h-full w-full video_nonFullScr"></video>
             </div>
 
         </Fragment >

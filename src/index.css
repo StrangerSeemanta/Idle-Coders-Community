@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.cscroll::-webkit-scrollbar {
+  border-radius: 10px;
+  height: 9px;
+  width: 9px;
+}
+
+.cscroll::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  height: 9px;
+  width: 9px;
+}
+.cscroll::-webkit-scrollbar-thumb {
+  background-color: rgb(255, 65, 128);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.cscroll::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(233, 0, 78);
+  cursor: pointer;
+}
+
+/* Dark Prefer */
+body.dark.cscroll::-webkit-scrollbar,
+body.dark .cscroll::-webkit-scrollbar {
+  border-radius: 10px;
+  height: 9px;
+  width: 9px;
+  background-color: rgba(0, 0, 0, 0.227);
+}
+
+body.dark.cscroll::-webkit-scrollbar-track,
+body.dark .cscroll::-webkit-scrollbar-track {
+  background-color: rgba(111, 109, 109, 0.461);
+  border-radius: 10px;
+}
+
+/* Video Player CSS */
+
+.video_nonFullScr {
+  max-height: 300px !important;
+  min-width: 530px !important;
+  object-fit: cover;
+}

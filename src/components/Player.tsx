@@ -205,7 +205,7 @@ function Player({ poster, src }: Props) {
                         </div>
                     </div>
                 </div>
-                <video onLoadedMetadata={() => { setVideoLoading(false) }} onContextMenu={(event) => { event.preventDefault(); }} onDoubleClick={() => setFullScr(!fullScr)} onClick={() => { setPlaying(!isPlaying) }} ref={videoRef} muted={muted} poster={poster} src={src} contextMenu="false" controlsList="nodownload" className="h-full w-full video_nonFullScr"></video>
+                <video onLoadedData={() => { setVideoLoading(false) }} onPlaying={() => { setVideoLoading(false) }} onWaiting={() => { setVideoLoading(true) }} onContextMenu={(event) => { event.preventDefault(); }} onDoubleClick={() => setFullScr(!fullScr)} onClick={() => { setPlaying(!isPlaying) }} ref={videoRef} muted={muted} poster={poster} src={src} contextMenu="false" controlsList="nodownload" className="h-full w-full video_nonFullScr"></video>
 
                 <div className={" absolute z-40 top-10 left-1/2 -translate-x-[50%] -translate-y-[50%] transition-all ease-soft-spring duration-500 " + (isSeeking ? "opacity-100 scale-100 visible" : "opacity-0 scale-150 invisible")}>
                     <h3 className="text-2xl rounded-full bg-primary/40 backdrop-blur-sm px-2 py-1 font-bold text-background  ">{getVideoDuration(length)}</h3>

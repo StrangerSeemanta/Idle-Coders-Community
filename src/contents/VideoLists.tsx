@@ -10,7 +10,7 @@ const videoLists = [
         thumbnail: Earth
     }, {
         title: "Introductory Video",
-        src: video,
+        src: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
         thumbnail: thumb_2
     }, {
         title: "Build Single Page React App",

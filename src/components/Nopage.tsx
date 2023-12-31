@@ -14,18 +14,18 @@ function Nopage() {
                         <Button
                             color='default'
                             variant='ghost'
-                            onClick={() => { navigate("/home") }}
+                            onClick={() => { navigate(-1) }}
                             radius='sm'
                         >
-                            Go back home
+                            Go back
                         </Button>
                         <Button
                             variant='light'
                             color='default'
                             radius='full'
-                            onClick={() => { navigate("/contact") }}
+                            onClick={() => { navigate("/home") }}
                             endContent={<span >&rarr;</span>} >
-                            Contact support
+                            Home
                         </Button>
                     </div>
                 </div>

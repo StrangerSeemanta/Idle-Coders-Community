@@ -8,9 +8,10 @@ interface Props {
 }
 function Player({ poster, src }: Props) {
     const videoRef = useRef<HTMLVideoElement>(null)
-    const [volume, setVolume] = useState<SliderValue>(80);
+    const [volume, setVolume] = useState<SliderValue>(50);
     const [muted, setMuted] = useState(false);
     const [isPlaying, setPlaying] = useState(false);
+    const [isSeeking, setIsSeeking] = useState(false)
     const [duration, setDuration] = useState(0);
     const [length, setLength] = useState(0);
     const [hideControls, setHideControls] = useState(true)
@@ -50,6 +51,8 @@ function Player({ poster, src }: Props) {
             }
         }
 
+        setIsSeeking(true)
+
     }
     useEffect(() => {
         videoRef.current?.addEventListener('loadedmetadata', () => {
@@ -81,7 +84,7 @@ function Player({ poster, src }: Props) {
     return (
         <Fragment>
             <div className="relative w-auto h-auto " >
-                <div onMouseEnter={() => { setHideControls(false) }} onMouseLeave={handleHideControls} style={{ opacity: hideControls ? 0 : 1, transitionDelay: hideControls ? "2000ms" : "0ms", transitionDuration: hideControls ? "250ms" : "0ms" }} className="video_controls transition-all ease-soft-spring   absolute z-30 bottom-0 left-0 w-full h-[10vh] max-h-[10vh] bg-gradient-to-t  to-00% from-foreground  to-foreground/0 backdrop-blur-sm">
+                <div onMouseEnter={() => { setHideControls(false) }} onMouseLeave={handleHideControls} style={{ opacity: hideControls ? 0 : 1, transitionDelay: hideControls ? "2500ms" : "0ms", transitionDuration: hideControls ? "450ms" : "50ms" }} className="video_controls transition-all ease-soft-spring   absolute z-30 bottom-0 left-0 w-full h-[10vh] max-h-[10vh] bg-gradient-to-t  to-00% from-primary  to-foreground/0 backdrop-blur-sm">
                     <div className="w-full h-full flex justify-between items-end py-1 px-2">
                         {/* Play Pause BTN */}
                         <div className="w-2/3 h-full flex items-end gap-1">
@@ -130,7 +133,7 @@ function Player({ poster, src }: Props) {
                                     onChange={handleLengthChange}
                                     defaultValue={0}
                                     showTooltip={true}
-
+                                    onChangeEnd={() => setIsSeeking(false)}
                                     className="w-full "
                                     tooltipProps={{ content: getVideoDuration(length) }}
                                     endContent={
@@ -202,6 +205,12 @@ function Player({ poster, src }: Props) {
                     </div>
                 </div>
                 <video onContextMenu={(event) => { event.preventDefault(); }} onDoubleClick={() => setFullScr(!fullScr)} onClick={() => { setPlaying(!isPlaying) }} ref={videoRef} muted={muted} poster={poster} src={src} contextMenu="false" controlsList="nodownload" className="h-full w-full video_nonFullScr"></video>
+
+                <div className={" absolute z-40 top-10 left-1/2 -translate-x-[50%] -translate-y-[50%] transition-all ease-soft-spring duration-500 " + (isSeeking ? "opacity-100 scale-100 visible" : "opacity-0 scale-150 invisible")}>
+                    <h3 className="text-2xl rounded-full bg-primary/40 backdrop-blur-sm px-2 py-1 font-bold text-background  ">{getVideoDuration(length)}</h3>
+                </div>
+
+
             </div>
 
         </Fragment >

@@ -9,7 +9,7 @@ interface CodeCard {
 }
 export function CodeCard({ children, src }: CodeCard) {
     return (
-        <a href={src} download={true}>
+        <a href={src} download={children?.toString().toUpperCase() + "_from idlecoders"}>
             <div className='px-9 py-4 w-fit max-w-xs h-fit cursor-pointer bg-pink-400 hover:bg-pink-500 dark:bg-pink-600 dark:hover:bg-pink-500 transition backdrop-blur-md shadow-lg mt-3 mx-5'>
                 <h1 className='text-medium font-semibold text-white'>{children} </h1>
 
@@ -35,7 +35,7 @@ function CodePage() {
                 <section className='w-full min-h-[100vh] px-5 py-2 relative '>
                     <h1 className='text-danger text-2xl font-bold px-5'>Get The Codes Now!!</h1>
                     <CodeCard src={HoverCardCode}>
-                        Hell
+                        Hover Card Design WIth HTML CSS
                     </CodeCard>
                 </section>
             </Beam>

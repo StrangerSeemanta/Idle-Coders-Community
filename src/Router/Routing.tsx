@@ -1,6 +1,7 @@
 
 import Nopage from "../components/Nopage";
 import BlogPage from "../pages/BlogPage";
+import CodePage from "../pages/CodePage";
 import Contact from "../pages/Contact";
 import Home from "../pages/Home";
 import Resources from "../pages/Resources";
@@ -38,6 +39,10 @@ const Routing =
             title: "Videos - Resources of Idle Coders",
             path: "/resources/videos",
             element: <VideoPage />
+        }, {
+            title: "Source Codes - Resources of Idle Coders",
+            path: "/resources/codes",
+            element: <CodePage />
         },
         {
             title: "No Page found: 404 -IdleCoders",

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Hover Card</title>
+  </head>
+  <body>
+    <div class="card">
+      <h1 class="number">01</h1>
+      <h1 class="card-heading">Services</h1>
+      <p class="card-body">
+        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Velit in
+        consectetur quod eaque voluptatibus fugit corrupti veniam laboriosam.
+      </p>
+      <a href="#" class="card-link"> Read More </a>
+    </div>
+  </body>
+</html>
+
+--------------------------------------------------------------------------------------
+---------------------------------- C S S  --------------------------------------------
+--------------------------------------------------------------------------------------
+
+html,
+body {
+  outline: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #120935;
+}
+.card {
+  min-width: 200px;
+  width: 280px;
+  height: 300px;
+  background-color: #120935;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+  position: relative;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  border: 3px solid transparent;
+  transition: all linear 250ms;
+}
+.card::before {
+  content: " ";
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background: linear-gradient(to right, rgb(255, 0, 0), rgb(197, 6, 197));
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  scale: 1.03;
+  transition: all linear 250ms;
+  animation: glow infinite 6s ease-in;
+}
+@keyframes glow {
+  0% {
+    opacity: 1;
+    background: linear-gradient(to right, rgb(255, 0, 0), rgb(197, 6, 197));
+  }
+  25% {
+    opacity: 0;
+    background: linear-gradient(to right, rgb(5, 255, 18), rgb(76, 0, 255));
+  }
+  50% {
+    opacity: 1;
+
+    background: linear-gradient(to right, rgb(5, 255, 18), rgb(76, 0, 255));
+  }
+  75% {
+    opacity: 0;
+    background: linear-gradient(to right, rgb(255, 0, 0), rgb(197, 6, 197));
+  }
+  100% {
+    opacity: 1;
+    background: linear-gradient(to right, rgb(255, 0, 0), rgb(197, 6, 197));
+  }
+}
+.card:hover::before {
+  animation: none;
+}
+.card:hover {
+  box-shadow: 0px 0px 15px rgb(197, 6, 197),
+    0px 0px 270px 20px rgba(197, 6, 197, 0.197);
+}
+.card .number {
+  position: absolute;
+  right: 10%;
+  top: 0%;
+  z-index: 0;
+  transition: all ease-in 250ms;
+  background-color: transparent;
+  color: rgb(150, 147, 147);
+  user-select: none;
+}
+.card:hover .number {
+  font-size: 5.5rem;
+  top: 0%;
+  right: 50%;
+  transform: translateY(-60%) translateX(-50%);
+  background: linear-gradient(to top, rgb(241, 6, 116), rgb(197, 6, 197));
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.card .card-heading {
+  color: white;
+  margin: 0px;
+  font-weight: 800;
+  position: absolute;
+  inset: 35% 0px 29px 10px;
+  z-index: 11;
+  width: fit-content;
+}
+.card .card-body {
+  color: white;
+  position: absolute;
+  inset: 45% 0px 29px 10px;
+  z-index: 11;
+  width: 80%;
+  font-size: 14px;
+}
+.card .card-link {
+  color: white;
+  position: absolute;
+  inset: 82% 0px 29px 10px;
+  z-index: 11;
+  text-decoration: none;
+  background-color: transparent;
+  width: fit-content;
+  height: fit-content;
+  padding: 4px 7px;
+  border: 2px solid rgb(241, 6, 116);
+  font-size: small;
+  transition: all linear 250ms;
+}
+
+.card-link:hover {
+  background-color: rgb(241, 6, 116);
+}
+.card-link:active {
+  filter: grayscale(1);
+}

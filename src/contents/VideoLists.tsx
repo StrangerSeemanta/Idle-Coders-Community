@@ -5,16 +5,16 @@ import thumb_2 from "./thumbs/who are we.png"
 import thumb_3 from "./thumbs/zebra.jpg"
 const videoLists = [
     {
-        title: "Responsive Navbar Using HTML CSS",
+        title: "Introductory Video",
         src: video,
         thumbnail: Earth
     }, {
-        title: "Introductory Video",
+        title: "Big Bunny Bucket",
         src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
         thumbnail: thumb_2
     }, {
         title: "Build Single Page React App",
-        src: video,
+        src: "https://drive.google.com/file/d/1EQ7znx8VL5vIbVbUcNx-EnXcifxM89i_/view?usp=drive_link",
         thumbnail: thumb_3
     },
 ]

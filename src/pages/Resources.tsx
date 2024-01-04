@@ -31,7 +31,7 @@ function Resources() {
                         </Card>
                     </Tooltip>
                     <Tooltip closeDelay={100} content="Source Codes of All Projects" showArrow color="foreground" shadow="lg">
-                        <Card radius="none" isPressable shadow="md" className="cursor-pointer w-full h-full hover:brightness-90 bg-success col-span-6 max-sm:col-span-12 relative  transition-all ease-soft-spring duration-250 flex justify-center items-center">
+                        <Card onClick={() => { navigate('codes') }} radius="none" isPressable shadow="md" className="cursor-pointer w-full h-full hover:brightness-90 bg-success col-span-6 max-sm:col-span-12 relative  transition-all ease-soft-spring duration-250 flex justify-center items-center">
                             <h1 className="text-2xl font-bold text-white flex justify-center items-center gap-3">
                                 <div >
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="white" className="w-6 h-6">

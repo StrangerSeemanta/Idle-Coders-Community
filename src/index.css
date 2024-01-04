@@ -43,6 +43,6 @@ body.dark .cscroll::-webkit-scrollbar-track {
 
 .video_nonFullScr {
   max-height: 300px !important;
-  min-width: 530px !important;
+
   object-fit: cover;
 }

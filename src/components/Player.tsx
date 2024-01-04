@@ -2,7 +2,7 @@ import { Button, CircularProgress, Slider, SliderValue } from "@nextui-org/react
 import { Fragment, useEffect, useRef, useState } from "react";
 import getVideoDuration from "../modules/getVideoDuration";
 interface Props {
-    poster: string;
+    poster?: string;
     src: string;
 
 }

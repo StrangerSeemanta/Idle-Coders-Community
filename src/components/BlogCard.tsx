@@ -1,3 +1,4 @@
+import { Image } from "@nextui-org/react";
 import { ReactNode } from "react";
 interface Props {
     heading: string | ReactNode;
@@ -12,7 +13,7 @@ function BlogCard({ heading, catagory, thumbnail, }: Props) {
             <div className=" group hover:bg-primary-50/60 dark:hover:bg-primary-50/30 transition overflow-hidden rounded-lg p-3  h-full flex flex-col justify-start">
                 <div >
                     <div className="relative w-full aspect-video rounded-md overflow-hidden">
-                        <img src={thumbnail} alt={heading?.toString()} className="object-cover transition group-hover:scale-150 w-full h-full" />
+                        <Image radius="sm" src={thumbnail} alt={heading?.toString()} className="object-cover transition group-hover:scale-125 w-full h-full" />
                     </div>
                 </div>
                 <div className="flex flex-col pt-2 flex-1">

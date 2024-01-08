@@ -33,7 +33,7 @@ function Intro() {
                         <div className="flex items-center justify-center mb-4 lg:justify-normal">
                             <h4 className="ml-2 text-sm font-bold tracking-widest text-primary uppercase">Welcome to Idle Coders </h4>
                         </div>
-                        <h1 className="mb-8 text-4xl font-extrabold leading-tight lg:text-5xl text-foreground">Your Gateway to <span className="text-purple-600">Front-End Excellence !</span></h1>
+                        <h1 className="mb-8 text-4xl font-extrabold leading-tight lg:text-5xl text-foreground">Your Gateway to <span className="text-danger">Front-End Excellence !</span></h1>
                         <p className="mb-6 text-base font-normal text-justify leading-7 lg:w-3/4 text-foreground">
                             Welcome to Idle Coders, where we turn programming into a laid-back, laughter-filled journey! Join our chill coding community for a blend of idle vibes and tech wizardry. Stay tuned for code-driven relaxation and a dash of humor.
 

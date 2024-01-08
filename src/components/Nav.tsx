@@ -110,8 +110,8 @@ export default function Nav() {
         }} >
 
         <NavbarBrand className="select-none">
-          <p className="text-2xl max-sm:text-medium font-bold text-primary" >
-            IdleCoders <sub className='text-sm font-bold text-warning'>Community</sub>
+          <p className="text-2xl max-sm:text-medium font-bold text-danger" >
+            IdleCoders <sub className='text-sm font-bold text-foreground'>Community</sub>
           </p>
         </NavbarBrand>
 

@@ -8,7 +8,7 @@ import Home from "../pages/Home";
 const Routing =
 {
     "HomePage": {
-        title: "Idle Coders Community",
+        title: "Idle Coders - Your Favorite Youtube Channel",
         path: "/",
         element: <Home />
     },

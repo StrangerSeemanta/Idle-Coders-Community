@@ -7,6 +7,7 @@ import Projects from './tabs/Projects';
 import BlogPage from './components/BlogPage';
 import Nopage from './components/Nopage';
 import DynamicProjects from './pages/DynamicProjects';
+import Account from './pages/Account';
 export function HeadPolish({ children, title }: { children: ReactNode, title: string }) {
 
   useEffect(() => {
@@ -36,7 +37,7 @@ function Router() {
         {/* Nested Route For Resources */}
         <Route path='/resources' element={<Resources />}>
           <Route index element={
-            <HeadPolish title='Resources - Idle Coders Community'>
+            <HeadPolish title='Resources -From IdleCoders Yt Channel '>
               <Projects />
             </HeadPolish>
           } />
@@ -46,6 +47,12 @@ function Router() {
           <Route path='blogs' element={
             <HeadPolish title='Blogs - Stay Tuned With Us'>
               <BlogPage />
+            </HeadPolish>
+          } />
+
+          <Route path='account' element={
+            <HeadPolish title='Login Or Create Account On IdleCoders '>
+              <Account />
             </HeadPolish>
           } />
 

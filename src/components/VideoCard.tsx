@@ -7,6 +7,7 @@ interface Props {
     children: string | ReactNode;
     thumbnail: string;
     source: string;
+
 }
 function VideoCard({ children, thumbnail, source }: Props) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();

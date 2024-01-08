@@ -1,9 +1,13 @@
 import Nav from './components/Nav'
-import Footer from './components/Footer'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Routing from './Router/Routing';
 import { ReactNode, useEffect } from 'react';
-function HeadPolish({ children, title }: { children: ReactNode, title: string }) {
+import Resources from './pages/Resources';
+import Projects from './tabs/Projects';
+import BlogPage from './components/BlogPage';
+import Nopage from './components/Nopage';
+import DynamicProjects from './pages/DynamicProjects';
+export function HeadPolish({ children, title }: { children: ReactNode, title: string }) {
 
   useEffect(() => {
     document.title = title
@@ -16,21 +20,63 @@ function HeadPolish({ children, title }: { children: ReactNode, title: string })
   )
 }
 function Router() {
+
   return (
     <BrowserRouter>
       <Nav />
       <Routes>
-        {Routing.map(route => (
-          <Route path={route.path} element={
-            <HeadPolish title={route.title}>
-              {route.element}
+        <Route
+          path={Routing.HomePage.path}
+          element={
+            <HeadPolish title={Routing.HomePage.title}>
+              {Routing.HomePage.element}
             </HeadPolish>
-          } key={route.path} />
-        ))}
+          } />
+
+        {/* Nested Route For Resources */}
+        <Route path='/resources' element={<Resources />}>
+          <Route index element={
+            <HeadPolish title='Resources - Idle Coders Community'>
+              <Projects />
+            </HeadPolish>
+          } />
+          <Route path='projects/:projectId' element={
+            <DynamicProjects />
+          } />
+          <Route path='blogs' element={
+            <HeadPolish title='Blogs - Stay Tuned With Us'>
+              <BlogPage />
+            </HeadPolish>
+          } />
+
+          <Route path='*' element={
+            <HeadPolish title={Routing.NoPage.title}>
+              <Nopage isButtonDisabled />
+            </HeadPolish>
+          } />
+
+        </Route>
+        {/* Nesting Ended */}
+
+        <Route
+          path={Routing.ContactPage.path}
+          element={
+            <HeadPolish title={Routing.ContactPage.title}>
+              {Routing.ContactPage.element}
+            </HeadPolish>
+          } />
+
+
+        <Route
+          path={Routing.NoPage.path}
+          element={
+            <HeadPolish title={Routing.NoPage.title}>
+              {Routing.NoPage.element}
+            </HeadPolish>
+          } />
       </Routes>
 
-      <Footer />
-    </BrowserRouter>
+    </BrowserRouter >
 
   )
 }

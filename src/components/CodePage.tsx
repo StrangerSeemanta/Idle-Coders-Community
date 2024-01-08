@@ -1,7 +1,7 @@
 import { BreadcrumbItem, Breadcrumbs, } from '@nextui-org/react'
 import { Fragment, ReactNode } from 'react'
 import Bg from "./../assets/bg_3.png"
-import Beam from '../components/Beam';
+import Beam from './Beam';
 import HoverCardCode from "./../contents/codes.txt"
 interface CodeCard {
     children: ReactNode;

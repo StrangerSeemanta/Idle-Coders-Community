@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, NavbarMenu, NavbarMenuToggle, NavbarMenuItem, Divider, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, } from "@nextui-org/react";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, NavbarMenu, NavbarMenuToggle, NavbarMenuItem, Divider, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, } from "@nextui-org/react";
 import MoonIcon from "../Icons/MoonIcon";
 import SunIcon from "../Icons/SunIcon";
 import detectTheme from "../modules/DetectSystemTheme";
@@ -22,21 +22,48 @@ const getTheme = () => {
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const Links = useMemo(function () {
-    return [{ "name": "home", "href": "/home" }, { "name": "Resources", "href": "/resources" }, { "name": "Blogs", "href": "/blogs" }, { "name": "Contact", "href": "/contact" }];
+    return {
+      forDesktop: [
+        {
+          "name": "home",
+          "href": "/"
+        },
+        {
+          "name": "Resources",
+          "href": "/resources"
+        },
+
+        {
+          "name": "Contact",
+          "href": "/contact"
+        }
+      ],
+      forMobile: [
+        {
+          "name": "home",
+          "href": "/"
+        },
+        {
+          "name": "Resources",
+          "href": "/resources"
+        },
+
+        {
+          "name": "Contact",
+          "href": "/contact"
+        }, {
+          "name": "Blogs",
+          "href": "/resources/blogs"
+        }, {
+          "name": "Account",
+          "href": "/resources/accounts"
+        },
+      ]
+    };
   }, [])
-  const [activeIndex, setActiveIndex] = useState(0);
   const location = useLocation()
   const [selectedTheme, setSelectedTheme] = useState<"light" | "dark" | "system">(getTheme())
-  useEffect(() => {
-    const currentPath = location.pathname.toLowerCase();
-    const activeIndex = Links.findIndex(item => currentPath.includes(item.href.toLowerCase()));
 
-    if (activeIndex !== 0) {
-      setActiveIndex(activeIndex)
-    }
-
-
-  }, [location.pathname, Links])
 
 
 
@@ -90,9 +117,9 @@ export default function Nav() {
 
         <NavbarContent className="hidden lg:flex gap-4" justify="center">
 
-          {Links.map((item, index) => (
+          {Links.forDesktop.map((item, index) => (
             <NavbarItem
-              isActive={activeIndex === index && true}
+              isActive={location.pathname === item.href}
               key={`${item}-${index} ${item}desk`}
             >
               <Button
@@ -101,12 +128,10 @@ export default function Nav() {
                 disableRipple
                 as={RouterLink}
                 color={
-                  activeIndex === index ? "danger" : "default"
+                  location.pathname === item.href ? "danger" : "default"
                 }
                 to={item.href}
-                onClick={
-                  () => { setActiveIndex(index); }
-                }
+
                 className="capitalize hover:bg-none">
                 {item.name}
               </Button>
@@ -160,21 +185,16 @@ export default function Nav() {
 
           </NavbarItem>
 
-          <NavbarItem className="hidden lg:flex">
-            <Button as={Link} color="danger" href="#" radius="sm" variant="solid">
-              Log In
-            </Button>
-          </NavbarItem>
           <NavbarMenuToggle
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             className="lg:hidden"
           />
         </NavbarContent>
         <NavbarMenu>
-          {Links.map((item, index) => (
+          {Links.forMobile.map((item, index) => (
             <NavbarMenuItem
               key={`${item}-${index}`}
-              isActive={activeIndex === index && true}
+              isActive={location.pathname === item.href}
             >
 
               <Button
@@ -182,33 +202,17 @@ export default function Nav() {
                 as={RouterLink}
                 to={item.href}
                 color={
-                  activeIndex === index ? "danger" : item.name.toLowerCase() === "sign up" ? "danger" : "default"
+                  location.pathname === item.href ? "danger" : item.name.toLowerCase() === "sign up" ? "danger" : "default"
                 }
                 className="w-full capitalize"
                 size="sm"
                 radius="none"
-                onClick={
-                  () => { setIsMenuOpen(false); setActiveIndex(index); }
-                }
+
               >
                 {item.name}
               </Button>
             </NavbarMenuItem>
           ))}
-          <Divider />
-
-          <NavbarMenuItem >
-            <Button
-              variant="solid"
-              color="danger"
-              className="w-full capitalize"
-              size="sm"
-              radius="none"
-            >
-              Log In
-            </Button>
-          </NavbarMenuItem>
-
         </NavbarMenu>
       </Navbar >
       <Divider />

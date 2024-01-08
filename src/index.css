@@ -46,3 +46,16 @@ body.dark .cscroll::-webkit-scrollbar-track {
 
   object-fit: cover;
 }
+
+.drift_animation {
+  animation: drift infinite ease-out 1.3s;
+}
+@keyframes drift {
+  0%,
+  100% {
+    transform: translateX(-4px);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+}

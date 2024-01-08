@@ -2,8 +2,10 @@ import { Button, Link } from "@nextui-org/react"
 import Logo from "./../assets/logo.png"
 import MailIcon from "../Icons/MailIcon"
 import { useEffect, useRef } from "react"
+import { useNavigate } from "react-router-dom"
 function Intro() {
     const logoDiv = useRef<HTMLDivElement>(null)
+    const navigate = useNavigate()
     useEffect(() => {
 
         logoDiv.current?.addEventListener('mousemove', (event) => {
@@ -39,7 +41,7 @@ function Intro() {
                             But remember Sleeping Is More Interesting Than Coding....
                         </p>
                         <div className="flex flex-col items-center gap-4 lg:flex-row">
-                            <Button radius="sm" variant="shadow" color="danger">
+                            <Button onPress={() => navigate('/resources')} radius="sm" variant="shadow" color="danger">
                                 Explore Resources
                             </Button>
                             <Button as={Link} size="md" radius="sm" variant="light" className="text-medium" href="mailto:ssworkmail22@gmail.com" startContent={<MailIcon />}>

@@ -36,6 +36,17 @@ const Blogs = [
     },
     des: "we tried to cover some uncovered and stunning projects with vanilla HTML CSS and Little bit of JS",
   },
+  {
+    heading: "Twitch Clone",
+    catagory: "catagory",
+    thumbnail: HTMLPic,
+    posted: {
+      by: "shuvo sarker",
+      date: "14/10/2023",
+      profileImgSrc: AvatarPic,
+    },
+    des: "we tried to cover some uncovered and stunning projects with vanilla HTML CSS and Little bit of JS",
+  },
 ];
 
 export default Blogs;

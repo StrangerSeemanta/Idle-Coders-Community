@@ -1,9 +1,9 @@
 import { BreadcrumbItem, Breadcrumbs, } from '@nextui-org/react'
 import { Fragment } from 'react'
 import Bg from "./../assets/bg_3.png"
-import Caurasol, { CaurasolItem } from '../components/Caurasol';
-import Beam from '../components/Beam';
-import VideoCard from '../components/VideoCard';
+import Caurasol, { CaurasolItem } from './Caurasol';
+import Beam from './Beam';
+import VideoCard from './VideoCard';
 import videoLists from '../contents/VideoLists';
 
 function VideoPage() {

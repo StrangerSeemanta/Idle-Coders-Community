@@ -1,10 +1,6 @@
 module.exports = {
   root: true,
-<<<<<<< HEAD
   env: { browser: true, es2020: true },
-=======
-  env: { browser: true, es2020: true ,"node":true},
->>>>>>> 41bde3095bee20d09bcd4f13479997fadcdbb916
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',

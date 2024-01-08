@@ -4,6 +4,7 @@ import CountriesData from "./../data/countries.json"
 import Policies from '../components/Policies';
 import Beam from '../components/Beam';
 import BG from "./../assets/Bg_2.png"
+import Footer from '../components/Footer';
 
 function Contact() {
     const [agreed, setAgreed] = useState(false)
@@ -84,7 +85,8 @@ function Contact() {
                 </div >
             </Beam>
 
-
+            {/* Add Footer */}
+            <Footer />
         </>
     )
 }

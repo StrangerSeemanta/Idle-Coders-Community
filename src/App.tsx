@@ -6,6 +6,8 @@ import Toast from "./components/Toast"
 function App() {
     const [offlineToast, setOfflineToast] = useState(false);
     useEffect(() => {
+
+
         const int = setInterval(() => {
             if (!window.navigator.onLine) {
                 setOfflineToast(true)
@@ -16,7 +18,8 @@ function App() {
         }, 1000)
 
         return () => clearInterval(int)
-    }, [navigator.onLine])
+
+    }, [])
     return (
         <Fragment>
             <Router />

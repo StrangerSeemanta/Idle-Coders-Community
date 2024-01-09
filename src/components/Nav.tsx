@@ -128,7 +128,7 @@ export default function Nav() {
                 disableRipple
                 as={RouterLink}
                 color={
-                  location.pathname === item.href ? "danger" : "default"
+                  (location.pathname === item.href) || (location.pathname.includes(`${item.href}/`)) ? "danger" : "default"
                 }
                 to={item.href}
 

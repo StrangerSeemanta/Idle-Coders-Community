@@ -1,26 +1,24 @@
-import React, { Fragment } from 'react'
+import { forwardRef, HTMLAttributes } from 'react'
 import { twMerge } from 'tailwind-merge'
-
-interface BoxProps {
-    children: React.ReactNode;
-    className?: string | string[];
+interface CustomDivProps {
+    disableBorder?: boolean,
+    rounded?: "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "full",
+    nopadding?: boolean;
 }
-function Paper({ children, className }: BoxProps) {
+interface DivProps extends HTMLAttributes<HTMLDivElement>, CustomDivProps { }
+
+const Paper = forwardRef<HTMLDivElement, DivProps>(({
+    className,
+    children,
+    disableBorder,
+    rounded, nopadding,
+    ...props
+}, ref) => {
+
     return (
-        <Fragment>
-            <div
-                className={twMerge(`
-                bg-default-200
-                dark:bg-default-50
-                rounded-lg
-                h-fit
-                w-full
-                `, className)}
-            >
-                {children}
-            </div>
-        </Fragment>
+        <div ref={ref} className={twMerge("dark:bg-default-50 dark:border-divider", !nopadding && "p-6", rounded && `rounded-${rounded}`, !disableBorder && "border", className)} {...props}>
+            {children}
+        </div>
     )
-}
-
+})
 export default Paper

@@ -85,8 +85,9 @@ function Sidebar({ children, className }: SidebarProps) {
                             Routes.map((route, index) => (
 
                                 <SidebarItemButton
+
                                     key={route.label + String(index)}
-                                    isActive={location.pathname === route.href}
+                                    isActive={(location.pathname === route.href) || (location.pathname.includes(`${route.href}/projects`))}
                                     {...route}
                                 />
                             ))

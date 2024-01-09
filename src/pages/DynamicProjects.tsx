@@ -18,7 +18,7 @@ function YoutubeLinkCard({ href }: YoutubeLinkCardProps) {
                 <h4 className="font-semibold text-xl mb-4">Only on YouTube for now.</h4>
                 <p className="text-sm text-neutral-200">This course is only available on YouTube for now. I'll add it to the platform as soon as possible.</p>
             </div>
-            <a href={href} className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-200 text-slate-900 hover:bg-slate-300 hover:opacity-90 h-10 px-4 py-2 w-full">
+            <a href={href} className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-white text-slate-900 hover:bg-slate-200 hover:opacity-90 h-10 px-4 py-2 w-full">
                 Watch On Yotube
             </a>
         </div>

@@ -22,6 +22,7 @@ const Routing =
         path: "/resources",
         element: <Resources />
     },
+
     "ProjectLists": {
         title: "Projects -Explore The Stunning Projects ",
         path: "/resources",

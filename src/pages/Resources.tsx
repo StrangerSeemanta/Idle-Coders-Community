@@ -7,7 +7,7 @@ function Resources() {
     return (
         <Fragment>
             <Sidebar>
-                <div className=" bg-transparent w-full h-full">
+                <div className=" bg-transparent w-full h-full ">
                     <Outlet />
                 </div>
             </Sidebar>

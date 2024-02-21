@@ -24,7 +24,8 @@ export const ProjectsData = [
     topics: ["html", "css", "css animation"],
     links: {
       youtube: "https://youtu.be/vApn8KQcjJQ",
-      github: "https://github.com/StrangerSeemanta/portfolio.git",
+      github:
+        "https://github.com/StrangerSeemanta/gradient-hover-card-design.git",
     },
   },
   {
@@ -36,7 +37,8 @@ export const ProjectsData = [
     topics: ["JavaScript", "css animation", "html", "css"],
     links: {
       youtube: "https://youtu.be/IH6jHISbc38",
-      github: "https://github.com/StrangerSeemanta/portfolio.git",
+      github:
+        "https://github.com/StrangerSeemanta/magic-login-form-idlecoders.git",
     },
   },
   {
@@ -48,7 +50,8 @@ export const ProjectsData = [
     topics: ["JavaScript", "CSS Media Query", "css animation", "html", "css"],
     links: {
       youtube: "https://youtu.be/No3Ys5OsqvU",
-      github: "https://github.com/StrangerSeemanta/portfolio.git",
+      github:
+        "https://github.com/StrangerSeemanta/responsive-navbar-light-idlecoders.git",
     },
   },
   {
@@ -59,7 +62,8 @@ export const ProjectsData = [
     topics: ["CSS Media Query", "JavaScript", "html", "css"],
     links: {
       youtube: "https://youtu.be/FnluZsEDGQo",
-      github: "https://github.com/StrangerSeemanta/portfolio.git",
+      github:
+        "https://github.com/StrangerSeemanta/attractive-portfolio-idlecoders.git",
     },
   },
   {
@@ -70,13 +74,15 @@ export const ProjectsData = [
     topics: [
       "react",
       "TypeScript",
-      "vite",
+
       "Material UI",
       "JavaScript Advanced",
+      "vite",
     ],
     links: {
       youtube: "https://youtu.be/Z-kyeKF4iJI",
-      github: "https://github.com/StrangerSeemanta/portfolio.git",
+      github:
+        "https://github.com/StrangerSeemanta/react-single-page-idlecoders.git",
     },
   },
 ];

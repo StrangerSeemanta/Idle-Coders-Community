@@ -2,10 +2,10 @@ import { useParams } from "react-router-dom"
 import { HeadPolish } from "../Router"
 import { ProjectsData, ProjectsDataProps } from "../data/ProjectsData"
 import { Fragment, useEffect, useState } from "react";
-import Nopage from "../components/Nopage";
+import Nopage from "./Nopage";
 import Paper from "../components/Paper";
 import { Chip, Image } from "@nextui-org/react";
-import { FaYoutube, } from "react-icons/fa";
+import { FaYoutube, FaGithub } from "react-icons/fa";
 
 interface YoutubeLinkCardProps {
     href: string;
@@ -18,35 +18,37 @@ function YoutubeLinkCard({ href }: YoutubeLinkCardProps) {
                 <h4 className="font-semibold text-xl mb-4">Only on YouTube for now.</h4>
                 <p className="text-sm text-neutral-200">This course is only available on YouTube for now. I'll add it to the platform as soon as possible.</p>
             </div>
-            <a href={href} className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-white text-slate-900 hover:bg-slate-200 hover:opacity-90 h-10 px-4 py-2 w-full">
+            <a href={href} target="_blank" className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-white text-slate-900 hover:bg-slate-200 hover:opacity-90 h-10 px-4 py-2 w-full">
                 Watch On Yotube
             </a>
         </div>
     )
 }
-// interface GithubLinkProps {
-//     href: string;
-// }
+interface GithubLinkProps {
+    href: string;
+}
 
-// function GithubLinkCard({ href }: GithubLinkProps) {
-//     return (
-//         <div className=" shadow-lg rounded-md p-6 text-white bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-slate-500 via-slate-800 to-black">
-//             <div className="mb-7">
-//                 <h4 className="font-semibold text-xl mb-4">Get Source Code From Github</h4>
-//                 <p className="text-sm text-neutral-200">Currently, you can get the codes only on Github. I'll find a way to get codes from this platform as soon as possible </p>
-//             </div>
-//             <a href={href} className="inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-200 text-slate-900 hover:bg-slate-300 font-semibold hover:opacity-90 h-10 px-4 py-2 w-full">
-//                 Source Code
-//             </a>
-//         </div>
-//     )
-// }
+function GithubLinkCard({ href }: GithubLinkProps) {
+    return (
+        <div className=" shadow-lg rounded-md p-6 text-white bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-slate-500 via-slate-800 to-black">
+            <div className="mb-7">
+                <h4 className="font-semibold text-xl mb-4">Get Source Code From Github</h4>
+                <p className="text-sm text-neutral-200">Currently, you can get the codes only on Github. I'll find a way to get codes from this platform as soon as possible </p>
+            </div>
+            <a href={href} target="_blank" className="inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-200 text-slate-900 hover:bg-slate-300 font-semibold hover:opacity-90 h-10 px-4 py-2 w-full">
+                Source Code
+            </a>
+        </div>
+    )
+}
 
 
 function UniquePage({ data }: { data: ProjectsDataProps }) {
     return (
         <Fragment>
-            <div className="w-full h-fit p-6">
+
+            <div className="w-full h-fit p-6 ">
+
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
                     <div className="order-1 col-span-1 lg:col-span-3 flex flex-col space-y-6">
 
@@ -88,7 +90,7 @@ function UniquePage({ data }: { data: ProjectsDataProps }) {
                             </div>
                         </Paper>
                         {/* Social Media Cards */}
-                        {/* <div className="flex gap-x-2 items-center">
+                        <div className="flex gap-x-2 items-center">
                             <a href={data.links.github} target="_blank" className="w-full">
                                 <Paper rounded="md" className="flex flex-col items-center gap-y-2 w-full transition hover:opacity-70  cursor-pointer">
                                     <FaGithub size={37} />
@@ -101,13 +103,13 @@ function UniquePage({ data }: { data: ProjectsDataProps }) {
                                     <span className="text-xs text-default-700/80">Youtube</span>
                                 </Paper>
                             </a>
-                        </div> */}
+                        </div>
                     </div>
 
                     {/* Right Side */}
                     <div className="order-2 lg:col-span-2 flex flex-col space-y-6">
                         <YoutubeLinkCard href={data.links.youtube} />
-                        {/* <GithubLinkCard href={data.links.github} /> */}
+                        <GithubLinkCard href={data.links.github} />
                     </div>
                 </div>
 

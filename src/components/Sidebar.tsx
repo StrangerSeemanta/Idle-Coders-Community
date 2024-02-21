@@ -116,7 +116,7 @@ function Sidebar({ children, className }: SidebarProps) {
                     </div>
                 </div>
                 <Divider className='hidden lg:block' orientation='vertical' />
-                <div className={twMerge('h-full flex-1 overflow-y-auto py-3', className)}>
+                <div className={twMerge('h-full flex-1 overflow-y-auto py-3 cscroll', className)}>
                     <Button
                         onPress={onOpen}
                         radius='md'

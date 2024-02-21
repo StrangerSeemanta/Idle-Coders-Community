@@ -2,12 +2,7 @@ import Nav from './components/Nav'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Routing from './Router/Routing';
 import { ReactNode, useEffect } from 'react';
-import Resources from './pages/Resources';
-import Projects from './tabs/Projects';
-import BlogPage from './components/BlogPage';
-import Nopage from './components/Nopage';
-import DynamicProjects from './pages/DynamicProjects';
-import Account from './pages/Account';
+import Nopage from './pages/Nopage';
 export function HeadPolish({ children, title }: { children: ReactNode, title: string }) {
 
   useEffect(() => {
@@ -35,24 +30,26 @@ function Router() {
           } />
 
         {/* Nested Route For Resources */}
-        <Route path='/resources' element={<Resources />}>
+        <Route path={Routing.Resources.path} element={Routing.Resources.element}>
           <Route index element={
-            <HeadPolish title='Resources -From IdleCoders Yt Channel '>
-              <Projects />
+            <HeadPolish title={Routing.ProjectLists.title}>
+              {Routing.ProjectLists.element}
             </HeadPolish>
           } />
-          <Route path='projects/:projectId' element={
-            <DynamicProjects />
-          } />
-          <Route path='blogs' element={
-            <HeadPolish title='Blogs - Stay Tuned With Us'>
-              <BlogPage />
+          <Route path={Routing.ProjectPage.path}
+            element=
+            {
+              Routing.ProjectPage.element
+            } />
+          <Route path={Routing.Blogs.path} element={
+            <HeadPolish title={Routing.Blogs.title}>
+              {Routing.Blogs.element}
             </HeadPolish>
           } />
 
-          <Route path='account' element={
-            <HeadPolish title='Login Or Create Account On IdleCoders '>
-              <Account />
+          <Route path={Routing.Account.path} element={
+            <HeadPolish title={Routing.Account.title}>
+              {Routing.Account.element}
             </HeadPolish>
           } />
 

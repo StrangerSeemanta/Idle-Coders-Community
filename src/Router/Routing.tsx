@@ -1,8 +1,13 @@
 
-import Nopage from "../components/Nopage";
+import Nopage from "../pages/Nopage";
 
 import Contact from "../pages/Contact";
 import Home from "../pages/Home";
+import Projects from "../pages/Projects";
+import BlogPage from "../pages/BlogPage";
+import Account from "../pages/Account";
+import DynamicProjects from "../pages/DynamicProjects";
+import Resources from "../pages/Resources";
 
 
 const Routing =
@@ -11,6 +16,30 @@ const Routing =
         title: "Idle Coders - Your Favorite Youtube Channel",
         path: "/",
         element: <Home />
+    },
+    "Resources": {
+        title: "",
+        path: "/resources",
+        element: <Resources />
+    },
+    "ProjectLists": {
+        title: "Projects -Explore The Stunning Projects ",
+        path: "/resources",
+        element: <Projects />
+    }, "ProjectPage": {
+        title: "",
+        path: "projects/:projectId",
+        element: <DynamicProjects />
+    },
+    "Blogs": {
+        title: "Projects -Explore The Stunning Projects ",
+        path: "/resources/blogs",
+        element: <BlogPage />
+    },
+    "Account": {
+        title: "Projects -Explore The Stunning Projects ",
+        path: "/resources/account",
+        element: <Account />
     },
 
     "ContactPage": {
@@ -23,7 +52,8 @@ const Routing =
         title: "No Page found: 404 -IdleCoders",
         path: "/*",
         element: <Nopage />
-    }
+    },
+
 }
 
 

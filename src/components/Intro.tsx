@@ -3,7 +3,7 @@ import Logo from "./../assets/logo.png"
 import MailIcon from "../Icons/MailIcon"
 import { Fragment, useEffect, useRef } from "react"
 function SubscribeForm({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: () => void }) {
-    const BrevoFormSource = "https://33e5d9e9.sibforms.com/serve/MUIFADj9mvbgznWpOutn6kslHaKt_aG6ZUWYY1oR9oOjwZPHSN22g7KFSvj2hkbx5t2hB_sfeTOQ_2dMttxWFwaHYvKi-As-_n65bRtVOo3_BviBaZSx0O2M78q5uNmfrjFTThbmJf1qwb0rdUh5Pnjw41IFUdAFbyKxBodCfNHlgS3SjG02YUIYjhoVWjvOEFvA2tw1kZsICb3N"
+    const BrevoFormSource = "https://33e5d9e9.sibforms.com/serve/MUIFADWNf8QbqQ5lLSW5u7_uEzpSZoORR66jvfKgnvWf6xgAdI3V55XcT1uzbQu3Ds87tME6Z6TN_BoiC_NW4CEAlbTIirtKH1IkVDRTSk8W6N7iu9t8FDKVQ6Tgf896bralsvQ5Q3dlErQxFhbaVP7XjmlEnr7ArWZgc3gQCGQqrcJ8eCG0C6SD8_RYMhNYaFqweWGNeGPF1YHx"
     return (
         <Fragment>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop='blur' scrollBehavior="outside" placement='bottom-center' size='full'>

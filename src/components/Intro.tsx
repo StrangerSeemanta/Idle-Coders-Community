@@ -1,11 +1,39 @@
-import { Button, Link } from "@nextui-org/react"
+import { Button, Link, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react"
 import Logo from "./../assets/logo.png"
 import MailIcon from "../Icons/MailIcon"
-import { useEffect, useRef } from "react"
-import { useNavigate } from "react-router-dom"
+import { Fragment, useEffect, useRef } from "react"
+function SubscribeForm({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: () => void }) {
+    const BrevoFormSource = "https://33e5d9e9.sibforms.com/serve/MUIFADj9mvbgznWpOutn6kslHaKt_aG6ZUWYY1oR9oOjwZPHSN22g7KFSvj2hkbx5t2hB_sfeTOQ_2dMttxWFwaHYvKi-As-_n65bRtVOo3_BviBaZSx0O2M78q5uNmfrjFTThbmJf1qwb0rdUh5Pnjw41IFUdAFbyKxBodCfNHlgS3SjG02YUIYjhoVWjvOEFvA2tw1kZsICb3N"
+    return (
+        <Fragment>
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop='blur' scrollBehavior="outside" placement='bottom-center' size='full'>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalBody >
+                                <iframe className="w-full h-full "
+                                    src={BrevoFormSource}
+                                    allowFullScreen
+                                ></iframe>
+
+                            </ModalBody>
+                            <ModalFooter className="flex items-center justify-center">
+                                <Button variant="light" radius="sm" onPress={onClose}>Dissmiss</Button>
+                            </ModalFooter>
+                        </>
+                    )}
+
+                </ModalContent>
+            </Modal>
+            <div className="">
+            </div>
+        </Fragment>
+    )
+}
 function Intro() {
     const logoDiv = useRef<HTMLDivElement>(null)
-    const navigate = useNavigate()
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
     useEffect(() => {
 
         logoDiv.current?.addEventListener('mousemove', (event) => {
@@ -41,8 +69,8 @@ function Intro() {
                             But remember Sleeping Is More Interesting Than Coding....
                         </p>
                         <div className="flex flex-col items-center gap-4 lg:flex-row">
-                            <Button onPress={() => navigate('/resources')} radius="sm" variant="shadow" color="danger">
-                                Explore Resources
+                            <Button onPress={onOpen} radius="sm" variant="shadow" color="danger">
+                                Stay With Us
                             </Button>
                             <Button as={Link} size="md" radius="sm" variant="light" className="text-medium" href="mailto:ssworkmail22@gmail.com" startContent={<MailIcon />}>
                                 Send Mail
@@ -54,6 +82,9 @@ function Intro() {
                     </div>
                 </div>
             </div>
+
+            <SubscribeForm isOpen={isOpen} onOpenChange={onOpenChange} />
+
         </>
     )
 }

@@ -50,7 +50,7 @@ function Contact() {
                                 <Textarea name='message' maxRows={6} minRows={4} label="Message" labelPlacement="outside" placeholder="Write Your Message" isRequired variant="bordered" />
                             </div>
                             <div className="flex items-center w-full flex-wrap  gap-x-1 sm:col-span-2">
-                                <Switch color='danger' isSelected={agreed} onValueChange={() => { agreed ? setAgreed(!agreed) : onOpen() }} size="sm" >By selecting this, you agree to our
+                                <Switch color='danger' isSelected={agreed} onValueChange={() => { agreed ? setAgreed(false) : onOpen() }} size="sm" >By selecting this, you agree to our
                                 </Switch>
                                 <Button disableRipple onPress={onOpen} variant='bordered' className="p-0 hover:underline hover:border-transparent border-transparent font-semibold text-primary">
                                     Terms&nbsp;&&nbsp;Conditions

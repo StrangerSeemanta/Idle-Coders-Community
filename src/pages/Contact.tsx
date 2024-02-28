@@ -50,10 +50,10 @@ function Contact() {
                                 <Textarea name='message' maxRows={6} minRows={4} label="Message" labelPlacement="outside" placeholder="Write Your Message" isRequired variant="bordered" />
                             </div>
                             <div className="flex items-center w-full flex-wrap  gap-x-1 sm:col-span-2">
-                                <Switch color='danger' isSelected={agreed} onValueChange={setAgreed} size="sm" >By selecting this, you agree to our
+                                <Switch color='danger' isSelected={agreed} onValueChange={() => { agreed ? setAgreed(!agreed) : onOpen() }} size="sm" >By selecting this, you agree to our
                                 </Switch>
                                 <Button disableRipple onPress={onOpen} variant='bordered' className="p-0 hover:underline hover:border-transparent border-transparent font-semibold text-primary">
-                                    Privacy&nbsp;Policy
+                                    Terms&nbsp;&&nbsp;Conditions
                                 </Button>
                             </div>
                         </div>
@@ -65,7 +65,7 @@ function Contact() {
                         <ModalContent>
                             {(onClose) => (
                                 <>
-                                    <ModalHeader className="flex flex-col gap-1">Privacy & Policies</ModalHeader>
+                                    <ModalHeader className="flex flex-col gap-1">Terms & Conditions</ModalHeader>
                                     <ModalBody>
                                         <ScrollShadow hideScrollBar size={60}>
                                             <Policies />
@@ -73,8 +73,8 @@ function Contact() {
 
                                     </ModalBody>
                                     <ModalFooter>
-                                        <Button color="danger" variant="light" onPress={onClose}>
-                                            Close
+                                        <Button color="primary" radius='sm' variant="shadow" onPress={() => { setAgreed(true); onClose() }}>
+                                            Accept
                                         </Button>
 
                                     </ModalFooter>

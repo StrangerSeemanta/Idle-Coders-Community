@@ -1,4 +1,4 @@
-import { Button, Link, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react"
+import { Button, Link, Modal, ModalBody, ModalContent, ModalFooter, useDisclosure } from "@nextui-org/react"
 import Logo from "./../assets/logo.png"
 import MailIcon from "../Icons/MailIcon"
 import { Fragment, useEffect, useRef } from "react"

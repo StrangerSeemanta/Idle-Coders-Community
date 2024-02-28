@@ -1,39 +1,31 @@
-import { Button, Link, Modal, ModalBody, ModalContent, ModalFooter, useDisclosure } from "@nextui-org/react"
+import { Button, Link } from "@nextui-org/react"
 import Logo from "./../assets/logo.png"
 import MailIcon from "../Icons/MailIcon"
-import { Fragment, useEffect, useRef } from "react"
-function SubscribeForm({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: () => void }) {
-    const BrevoFormSource = "https://33e5d9e9.sibforms.com/serve/MUIFADWNf8QbqQ5lLSW5u7_uEzpSZoORR66jvfKgnvWf6xgAdI3V55XcT1uzbQu3Ds87tME6Z6TN_BoiC_NW4CEAlbTIirtKH1IkVDRTSk8W6N7iu9t8FDKVQ6Tgf896bralsvQ5Q3dlErQxFhbaVP7XjmlEnr7ArWZgc3gQCGQqrcJ8eCG0C6SD8_RYMhNYaFqweWGNeGPF1YHx"
+import { Fragment, useEffect, useRef, useState } from "react"
+import { useNavigate } from "react-router-dom";
+export function SubscribeForm() {
+    const [loadingFrame, setLoadingFrame] = useState(true);
+    const BrevoFormSource = "https://33e5d9e9.sibforms.com/serve/MUIFADYldQOpbu-CwXM-DHaw9w-V31a9SbjbqkW0J5Vd8zYB_Y4K_xN-_-rmGZO2680EgKevY_afqLfOlMNjuClh5UGHOkujm3R2ROROx9xByHzsBHdEJuOAmyb3bPUS3nxHxPDwOkPF2_84CkmqmYAKw6JzBODR1v4NzH52zp9sfvh-DxIZxTzRIWfCCvLUhYdpqf1fzi-odaRD"
     return (
         <Fragment>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop='blur' scrollBehavior="outside" placement='bottom-center' size='full'>
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalBody >
-                                <iframe className="w-full h-full "
-                                    src={BrevoFormSource}
-                                    allowFullScreen
-                                ></iframe>
+            <div className="w-full min-h-fit">
+                {!loadingFrame ?
+                    <>
+                    </>
+                    :
+                    <iframe onLoad={() => setLoadingFrame(true)} className="w-full min-h-screen h-[120vh] "
+                        src={BrevoFormSource}
+                        allowFullScreen
+                    ></iframe>
+                }
 
-                            </ModalBody>
-                            <ModalFooter className="flex items-center justify-center">
-                                <Button variant="light" radius="sm" onPress={onClose}>Dissmiss</Button>
-                            </ModalFooter>
-                        </>
-                    )}
-
-                </ModalContent>
-            </Modal>
-            <div className="">
             </div>
         </Fragment>
     )
 }
 function Intro() {
     const logoDiv = useRef<HTMLDivElement>(null)
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
+    const navigate = useNavigate()
     useEffect(() => {
 
         logoDiv.current?.addEventListener('mousemove', (event) => {
@@ -69,7 +61,7 @@ function Intro() {
                             But remember Sleeping Is More Interesting Than Coding....
                         </p>
                         <div className="flex flex-col items-center gap-4 lg:flex-row">
-                            <Button onPress={onOpen} radius="sm" variant="shadow" color="danger">
+                            <Button onPress={() => navigate("subscribe")} radius="sm" variant="shadow" color="danger">
                                 Stay With Us
                             </Button>
                             <Button as={Link} size="md" radius="sm" variant="light" className="text-medium" href="mailto:ssworkmail22@gmail.com" startContent={<MailIcon />}>
@@ -83,7 +75,6 @@ function Intro() {
                 </div>
             </div>
 
-            <SubscribeForm isOpen={isOpen} onOpenChange={onOpenChange} />
 
         </>
     )

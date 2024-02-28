@@ -8,6 +8,7 @@ import BlogPage from "../pages/BlogPage";
 import Account from "../pages/Account";
 import DynamicProjects from "../pages/DynamicProjects";
 import Resources from "../pages/Resources";
+import { SubscribeForm } from "../components/Intro";
 
 
 const Routing =
@@ -48,7 +49,11 @@ const Routing =
         path: 'contact',
         element: <Contact />
     },
-
+    "Subscribe": {
+        title: "Contact With Us ",
+        path: 'subscribe',
+        element: <SubscribeForm />
+    },
     "NoPage": {
         title: "No Page found: 404 -IdleCoders",
         path: "/*",

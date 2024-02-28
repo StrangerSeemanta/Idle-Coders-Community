@@ -70,7 +70,13 @@ function Router() {
             </HeadPolish>
           } />
 
-
+        <Route
+          path={Routing.Subscribe.path}
+          element={
+            <HeadPolish title={Routing.Subscribe.title}>
+              {Routing.Subscribe.element}
+            </HeadPolish>
+          } />
         <Route
           path={Routing.NoPage.path}
           element={

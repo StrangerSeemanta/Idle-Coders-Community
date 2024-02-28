@@ -119,15 +119,15 @@ function Sidebar({ children, className }: SidebarProps) {
                 <div className={twMerge('h-full flex-1 overflow-y-auto py-3 cscroll', className)}>
                     <Button
                         onPress={onOpen}
-                        radius='md'
+                        radius='full'
                         isIconOnly
-                        color='default'
-                        className=' fixed bottom-8 right-8 z-50 shadow-xl sm:hidden'
-                        size='lg'
-                        variant='solid'
+                        color='danger'
+                        className=' fixed bottom-28 right-5 z-50 shadow-xl h-16 w-16 sm:hidden'
+                        size="lg"
+                        variant='shadow'
 
                     >
-                        <CiSearch size={26} />
+                        <RiSearchEyeLine size={36} />
                     </Button>
                     {children}
                 </div>

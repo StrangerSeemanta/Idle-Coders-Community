@@ -1,23 +1,26 @@
-import { Button, Link } from "@nextui-org/react"
+import { Button, Link, Progress } from "@nextui-org/react"
 import Logo from "./../assets/logo.png"
 import MailIcon from "../Icons/MailIcon"
 import { Fragment, useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom";
 export function SubscribeForm() {
-    const [loadingFrame, setLoadingFrame] = useState(true);
+    const [showLoadingFrame, setShowLoadingFrame] = useState(false);
     const BrevoFormSource = "https://33e5d9e9.sibforms.com/serve/MUIFADYldQOpbu-CwXM-DHaw9w-V31a9SbjbqkW0J5Vd8zYB_Y4K_xN-_-rmGZO2680EgKevY_afqLfOlMNjuClh5UGHOkujm3R2ROROx9xByHzsBHdEJuOAmyb3bPUS3nxHxPDwOkPF2_84CkmqmYAKw6JzBODR1v4NzH52zp9sfvh-DxIZxTzRIWfCCvLUhYdpqf1fzi-odaRD"
     return (
         <Fragment>
             <div className="w-full min-h-fit">
-                {!loadingFrame ?
+
+
+                <iframe onLoad={() => setShowLoadingFrame(false)} className="w-full min-h-screen h-[120vh] "
+                    src={BrevoFormSource}
+                    allowFullScreen
+                ></iframe>
+                {showLoadingFrame &&
                     <>
-                    </>
-                    :
-                    <iframe onLoad={() => setLoadingFrame(true)} className="w-full min-h-screen h-[120vh] "
-                        src={BrevoFormSource}
-                        allowFullScreen
-                    ></iframe>
-                }
+                        <div className="bg-white h-[90vh] w-full text-lg flex items-center justify-center gap-8 flex-col text-danger">
+                            <Progress className="max-w-lg" size="sm" isIndeterminate color="danger" />
+                        </div>
+                    </>}
 
             </div>
         </Fragment>

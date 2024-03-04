@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useState } from "react"
 import Router from "./Router"
 import Toast from "./components/Toast"
+import { Spinner } from "@nextui-org/react";
 
 
 function App() {
@@ -26,7 +27,9 @@ function App() {
             <Toast disableAutohide open={offlineToast} onClose={() => {
                 setOfflineToast(false)
             }} >
-                Ahha, It seems you are currently offline!
+                <div className="flex justify-start items-center gap-7">
+                    <span>Ahha, It seems you are currently offline!</span><Spinner color="current" size="sm" />
+                </div>
             </Toast>
         </Fragment>
     )

@@ -1,4 +1,4 @@
-import { Button, Link, Progress } from "@nextui-org/react"
+import { Button, Link, Progress, Spinner } from "@nextui-org/react"
 import Logo from "./../assets/logo.png"
 import MailIcon from "../Icons/MailIcon"
 import { Fragment, useEffect, useRef, useState } from "react"
@@ -9,18 +9,29 @@ export function SubscribeForm() {
     return (
         <Fragment>
             <div className="w-full min-h-fit">
-
-
-                <iframe onLoad={() => setShowLoadingFrame(false)} className="w-full min-h-screen h-[120vh] "
-                    src={BrevoFormSource}
-                    allowFullScreen
-                ></iframe>
-                {showLoadingFrame &&
-                    <>
-                        <div className="bg-white h-[90vh] w-full text-lg flex items-center justify-center gap-8 flex-col text-danger">
-                            <Progress className="max-w-lg" size="sm" isIndeterminate color="danger" />
+                {
+                    !navigator.onLine ?
+                        <div className="flex flex-col gap-2 justify-center text-default-600/60 items-center text-2xl h-screen">
+                            <Spinner color="current" size="lg" className="mb-2" />
+                            <span className="font-bold ">                            No Internet. Failed To Load The Content
+                            </span>
+                            <span className="text-lg text-default-500/50 animate-pulse">Connect your internet & try again</span>
                         </div>
-                    </>}
+                        :
+                        <>
+                            <iframe onLoad={() => setShowLoadingFrame(false)} className="w-full min-h-screen h-[120vh] "
+                                src={BrevoFormSource}
+                                allowFullScreen
+                            ></iframe>
+                            {showLoadingFrame &&
+                                <>
+                                    <div className="bg-white h-[90vh] w-full text-lg flex items-center justify-center gap-8 flex-col text-danger">
+                                        <Progress className="max-w-lg" size="sm" isIndeterminate color="danger" />
+                                    </div>
+                                </>}</>
+                }
+
+
 
             </div>
         </Fragment>

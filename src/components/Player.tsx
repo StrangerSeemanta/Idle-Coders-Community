@@ -1,5 +1,5 @@
-import { Button, CircularProgress, Slider, SliderValue } from "@nextui-org/react";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Button, Slider, SliderValue, Spinner } from "@nextui-org/react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import getVideoDuration from "../modules/getVideoDuration";
 interface Props {
     poster?: string;
@@ -17,12 +17,12 @@ function Player({ poster, src }: Props) {
     const [hideControls, setHideControls] = useState(true)
     const [fullScr, setFullScr] = useState(false);
     const [isVideoLoading, setVideoLoading] = useState(true)
-    const showControlsAutoHide = () => {
+    const showControlsAutoHide = useCallback(() => {
         setHideControls(false)
 
         const autoHideTimer = setTimeout(handleHideControls, 1000)
         return () => clearTimeout(autoHideTimer)
-    }
+    }, [])
     const handleHideControls = () => {
         setHideControls(true)
     }
@@ -43,7 +43,7 @@ function Player({ poster, src }: Props) {
             }
             showControlsAutoHide()
         }
-    }, [isPlaying, videoRef])
+    }, [isPlaying, videoRef, showControlsAutoHide])
     const handleLengthChange = (value: SliderValue) => {
         if (typeof value === 'number') {
             setLength(value);
@@ -213,7 +213,7 @@ function Player({ poster, src }: Props) {
 
                 {isVideoLoading && <div className={" bg-default-300/40 backdrop-blur-sm px-2 py-2 w-20 h-20 flex justify-center items-center absolute z-40 top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] transition-all ease-soft-spring duration-500 "}>
                     <h3 className="text-2xl  font-bold text-background  ">
-                        <CircularProgress aria-label="loader" color="danger" />
+                        <Spinner aria-label="loader" color="danger" />
                     </h3>
                 </div>}
 

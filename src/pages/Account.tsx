@@ -126,13 +126,13 @@ export function SignupPage() {
                 <div className='flex gap-4'>
                     <Input name='fname' variant='bordered' size='lg' radius='sm' value={FirstName} onValueChange={setFirstName}
                         isRequired labelPlacement='outside' label="First Name" type='text' />
-                    <Input name='fname' variant='bordered' size='lg' radius='sm' value={LastName} onValueChange={setLastName}
-                        isRequired labelPlacement='outside' label="Last Name" type='text' />
+                    <Input name='lname' variant='bordered' size='lg' radius='sm' value={LastName} onValueChange={setLastName}
+                        labelPlacement='outside' label="Last Name" type='text' />
                 </div>
                 <Input name='newuser_mail' placeholder='Your Active Email Address' startContent={<IoIosMail className='text-default-400' size={26} />} variant='bordered' size='lg' radius='sm' value={userMail} onValueChange={setUserMail} isClearable
                     isRequired labelPlacement='outside' label="Email" type='Email' />
 
-                <Input name='newuser_password' placeholder='Create New Password'
+                <Input name='newuser_password' isRequired placeholder='Create New Password'
                     startContent={<IoIosLock className='text-default-400' size={26} />}
                     endContent={userPassword.length > 0 &&
                         <Button onPress={() => setShowPassword(!showPassword)} isIconOnly radius='full' size='sm' variant='light'>
@@ -141,9 +141,9 @@ export function SignupPage() {
                     variant='bordered' size='lg' radius='sm' value={userPassword} onValueChange={setUserPassword}
                     labelPlacement='outside' label="Password" type={showPassword ? "text" : "password"} />
 
-                <Input name='country' variant='bordered' size='lg' radius='sm' value={countryName} onValueChange={setCountryName}
+                <Input name='country' isRequired variant='bordered' size='lg' radius='sm' value={countryName} onValueChange={setCountryName}
                     labelPlacement='outside' placeholder='Country' label="Country Name" type='text' />
-                <Input name='birthdate' variant='bordered' size='lg' radius='sm' value={birthDate} onValueChange={setBirthDate}
+                <Input name='birthdate' isRequired variant='bordered' size='lg' radius='sm' value={birthDate} onValueChange={setBirthDate}
                     labelPlacement='outside' placeholder='Country' label=" Date Of Birth" type='date' />
                 <div>
                     <span className='font-semibold'>  Are you a subscriber of our youtube channel {`(Idlecoders)`}?</span>

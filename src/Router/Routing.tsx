@@ -5,7 +5,7 @@ import Contact from "../pages/Contact";
 import Home from "../pages/Home";
 import Projects from "../pages/Projects";
 import BlogPage from "../pages/BlogPage";
-import Account from "../pages/Account";
+import Account, { LoginPage, SignupPage } from "../pages/Account";
 import DynamicProjects from "../pages/DynamicProjects";
 import Resources from "../pages/Resources";
 import { SubscribeForm } from "../components/Intro";
@@ -41,9 +41,18 @@ const Routing =
     "Account": {
         title: "Projects -Explore The Stunning Projects ",
         path: "/resources/account",
-        element: <Account />
+        element: <Account />,
+        "Login": {
+            title: "Idlecoders Login - Login In To Idlecoders",
+            path: "/resources/account/login",
+            element: <LoginPage />
+        },
+        "Signup": {
+            title: "Create New Account - Idlecoders",
+            path: "/resources/account/signup",
+            element: <SignupPage />
+        }
     },
-
     "ContactPage": {
         title: "Contact With Us ",
         path: 'contact',

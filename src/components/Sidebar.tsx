@@ -20,20 +20,25 @@ function Sidebar({ children, className }: SidebarProps) {
             {
                 label: "Browse",
                 href: "/resources",
-                Icon: MdExplore
+                Icon: MdExplore,
+                isActive: location.pathname === "/resources" || location.pathname.includes('/resources/projects')
             },
             {
                 label: "Blogs",
                 href: "/resources/blogs",
-                Icon: SiGoogledocs
+                Icon: SiGoogledocs,
+                isActive: location.pathname === "/resources/blogs" || location.pathname.includes('/resources/blogs')
+
             },
             {
                 label: "Account",
-                href: "/resources/account",
-                Icon: FaUser
+                href: "/resources/account/login",
+                Icon: FaUser,
+                isActive: location.pathname.includes("/resources/account")
+
             },
         ]
-    }, [])
+    }, [location.pathname])
 
     return (
         <Fragment>
@@ -48,7 +53,6 @@ function Sidebar({ children, className }: SidebarProps) {
                                 <SidebarItemButton
 
                                     key={route.label + String(index)}
-                                    isActive={(location.pathname === route.href) || (location.pathname.includes(`${route.href}/projects`))}
                                     {...route}
                                 />
                             ))

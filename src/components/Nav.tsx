@@ -56,7 +56,7 @@ export default function Nav() {
           "href": "/resources/blogs"
         }, {
           "name": "Account",
-          "href": "/resources/account"
+          "href": "/resources/account/login"
         },
       ]
     };

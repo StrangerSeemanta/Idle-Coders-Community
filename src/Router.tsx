@@ -47,11 +47,19 @@ function Router() {
             </HeadPolish>
           } />
 
-          <Route path={Routing.Account.path} element={
-            <HeadPolish title={Routing.Account.title}>
-              {Routing.Account.element}
-            </HeadPolish>
-          } />
+          <Route path={Routing.Account.path} element={Routing.Account.element} >
+            <Route path={Routing.Account.Login.path} element={
+              <HeadPolish title={Routing.Account.Login.title} >
+                {Routing.Account.Login.element}
+              </HeadPolish>
+            } />
+            <Route path={"/resources/account/signup"} element={
+              <HeadPolish title={Routing.Account.Signup.title} >
+                {Routing.Account.Signup.element}
+              </HeadPolish>
+            } />
+
+          </Route>
 
           <Route path='*' element={
             <HeadPolish title={Routing.NoPage.title}>

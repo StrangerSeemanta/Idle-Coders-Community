@@ -1,9 +1,10 @@
 import { Divider, } from '@nextui-org/react';
-import { Fragment, ReactNode, useMemo, } from 'react'
+import { Fragment, ReactNode, useEffect, useMemo, useState, } from 'react'
 import { twMerge } from 'tailwind-merge';
 import { MdExplore } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import { SiGoogledocs } from "react-icons/si";
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 
 import SidebarItemButton from './SidebarItemButton';
 import { Link, useLocation } from 'react-router-dom';
@@ -14,7 +15,24 @@ interface SidebarProps {
 }
 function Sidebar({ children, className }: SidebarProps) {
     const location = useLocation()
+    const [user, setUser] = useState<User>(); // Specify the type as User | null
+    useEffect(() => {
 
+        const auth = getAuth();
+        const update = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                setUser(user);
+            } else {
+                // No user is signed in
+                setUser(undefined);
+
+            }
+        });
+
+        // Clean up subscription
+        return () => update();
+    }, []);
     const Routes = useMemo(() => {
         return [
             {
@@ -32,13 +50,13 @@ function Sidebar({ children, className }: SidebarProps) {
             },
             {
                 label: "Account",
-                href: "/resources/account/login",
+                href: user ? "/user/profile" : "/resources/account/login",
                 Icon: FaUser,
                 isActive: location.pathname.includes("/resources/account")
 
             },
         ]
-    }, [location.pathname])
+    }, [location.pathname, user])
 
     return (
         <Fragment>

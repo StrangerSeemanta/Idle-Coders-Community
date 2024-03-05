@@ -85,6 +85,15 @@ function Router() {
               {Routing.Subscribe.element}
             </HeadPolish>
           } />
+
+        <Route
+          path={Routing.Account.Profile.path}
+          element={
+            <HeadPolish title={Routing.Account.Profile.title}>
+              {Routing.Account.Profile.element}
+            </HeadPolish>
+          }
+        />
         <Route
           path={Routing.NoPage.path}
           element={

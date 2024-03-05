@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, NavbarMenu, NavbarMenuToggle, NavbarMenuItem, Divider, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, } from "@nextui-org/react";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, NavbarMenu, NavbarMenuToggle, NavbarMenuItem, Divider, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar, } from "@nextui-org/react";
 import MoonIcon from "../Icons/MoonIcon";
 import SunIcon from "../Icons/SunIcon";
 import detectTheme from "../modules/DetectSystemTheme";
 import Brush from "../Icons/Brush";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 
 const getTheme = () => {
   const theme = localStorage.getItem('theme');
@@ -21,6 +22,8 @@ const getTheme = () => {
 }
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [user, setUser] = useState<User>();
+  const navigate = useNavigate();
   const Links = useMemo(function () {
     return {
       forDesktop: [
@@ -56,17 +59,33 @@ export default function Nav() {
           "href": "/resources/blogs"
         }, {
           "name": "Account",
-          "href": "/resources/account/login"
+          "href": user ? "/user/profile" : "/resources/account/login",
         },
       ]
     };
-  }, [])
+  }, [user])
   const location = useLocation()
   const [selectedTheme, setSelectedTheme] = useState<"light" | "dark" | "system">(getTheme())
 
 
 
+  useEffect(() => {
 
+    const auth = getAuth();
+    const update = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in
+        setUser(user);
+      } else {
+        // No user is signed in
+        setUser(undefined);
+
+      }
+    });
+
+    // Clean up subscription
+    return () => update();
+  }, []);
 
   useEffect(() => {
     const applyTheme = (themeName: "light" | "dark") => {
@@ -142,7 +161,11 @@ export default function Nav() {
 
 
         </NavbarContent>
+
         <NavbarContent justify="end">
+          <NavbarItem>
+            <Avatar className="hover:opacity-80 transition-opacity cursor-pointer" onClick={() => { navigate("/user/profile") }} isBordered color="success" size="sm" fallback={user && user.displayName} src={user && user.photoURL || undefined} />
+          </NavbarItem>
           <NavbarItem >
             <Dropdown>
               <DropdownTrigger>

@@ -9,6 +9,7 @@ import Account, { LoginPage, SignupPage } from "../pages/Account";
 import DynamicProjects from "../pages/DynamicProjects";
 import Resources from "../pages/Resources";
 import { SubscribeForm } from "../components/Intro";
+import Profile from "../pages/Profile";
 
 
 const Routing =
@@ -51,7 +52,11 @@ const Routing =
             title: "Create New Account - Idlecoders",
             path: "/resources/account/signup",
             element: <SignupPage />
-        }
+        }, "Profile": {
+            title: "Contact With Us ",
+            path: '/user/profile',
+            element: <Profile />
+        },
     },
     "ContactPage": {
         title: "Contact With Us ",
@@ -63,6 +68,7 @@ const Routing =
         path: 'subscribe',
         element: <SubscribeForm />
     },
+
     "NoPage": {
         title: "No Page found: 404 -IdleCoders",
         path: "/*",

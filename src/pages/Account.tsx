@@ -1,26 +1,78 @@
 import { Button, Checkbox, CheckboxGroup, Divider, Input, Spinner } from '@nextui-org/react'
 import { FormEvent, Fragment, useState } from 'react'
 import { IoIosEye, IoIosEyeOff, IoIosLock, IoIosLogIn, IoIosMail } from "react-icons/io";
-import { FaFacebook, FaUserPlus } from "react-icons/fa";
+import { FaGithub, FaUserPlus } from "react-icons/fa";
 import GoogleIcon from '../Icons/GoogleIcon';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import { MdOutlineDone } from "react-icons/md";
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
+
+
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyAiXjzf-lTeUI4jagL14nYC8JuiXtWFuiI",
+    authDomain: "idc-login-1.firebaseapp.com",
+    projectId: "idc-login-1",
+    storageBucket: "idc-login-1.appspot.com",
+    messagingSenderId: "729941334830",
+    appId: "1:729941334830:web:bc49381684bcae55c978bf",
+    measurementId: "G-X5HGCGS03C"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 export function LoginPage() {
     const [loginEmail, setLoginEmail] = useState("");
     const [loginPassword, setLoginPassword] = useState("")
     const [showPassword, setShowPassword] = useState(false);
     const [isLogging, setLogging] = useState(false);
     const [isLoginSuccessful, setLoginSuccessful] = useState(false);
+    const [helperText, setHelperText] = useState("")
     const navigate = useNavigate()
     const handleLogIn = (e: FormEvent) => {
-        e.preventDefault()
-        setLogging(true)
-        setTimeout(() => {
-            setLogging(false);
-            setLoginSuccessful(true)
-        }, 2000);
+        e.preventDefault();
+        setLogging(true);
+        const auth = getAuth()
+        signInWithEmailAndPassword(auth, loginEmail, loginPassword)
+            .then(() => {
+                setLogging(false);
+                setLoginSuccessful(true);
+                navigate("/user/profile")
+
+            }).catch((e) => {
+                setLogging(false);
+                setLoginSuccessful(false)
+                setHelperText("Failed To Log In. Check your mail and password" + e)
+            })
+    }
+    const handleGoogleLogin = () => {
+        signInWithPopup(auth, new GoogleAuthProvider())
+            .then(() => {
+
+                navigate("/user/profile")
+
+                setLoginSuccessful(true)
+                setLogging(false)
+            }).catch((error) => {
+                console.log(error);
+            });
+    }
+    const githubSignIn = () => {
+        signInWithPopup(auth, new GithubAuthProvider())
+            .then(() => {
+
+                navigate("/user/profile")
+
+
+            }).catch((error) => {
+                console.log(error);
+
+            });
     }
     return (
         <div className="flex relative justify-center items-center gap-10 flex-col my-20  w-full lg:w-2/3 lg:border-1 p-14 rounded-3xl">
@@ -30,7 +82,7 @@ export function LoginPage() {
                 <Input name='account_email' placeholder='Account Username Or Email' startContent={<IoIosMail className='text-default-400' size={26} />} variant='bordered' size='lg' radius='sm' value={loginEmail} onValueChange={setLoginEmail} isClearable
                     isRequired labelPlacement='outside' label="Email" type='Email' />
 
-                <Input name='account_password' placeholder='Account Password'
+                <Input name='account_password' autoComplete="current-password" placeholder='Account Password'
                     startContent={<IoIosLock className='text-default-400' size={26} />}
                     endContent={loginPassword.length > 0 &&
                         <Button onPress={() => setShowPassword(!showPassword)} isIconOnly radius='full' size='sm' variant='light'>
@@ -38,7 +90,9 @@ export function LoginPage() {
                         </Button>}
                     variant='bordered' size='lg' radius='sm' value={loginPassword} onValueChange={setLoginPassword}
                     isRequired labelPlacement='outside' label="Password" type={showPassword ? "text" : "password"} />
-                <Button isDisabled={isLoginSuccessful} type='submit' radius='sm' variant='solid' color={isLogging ? "default" : (isLoginSuccessful ? "default" : 'danger')} size='lg'>
+                {helperText &&
+                    <p className='text-sm text-white p-2 text-center w-full bg-danger'>{helperText}</p>
+                }                <Button isDisabled={isLoginSuccessful} type='submit' radius='sm' variant='solid' className={twMerge(isLogging ? "bg-default" : (isLoginSuccessful ? "bg-default" : 'bg-foreground text-background'))} size='lg'>
                     {isLoginSuccessful ? <MdOutlineDone size={24} /> : <>Login<IoIosLogIn size={24} /></>}
                 </Button>
 
@@ -46,17 +100,17 @@ export function LoginPage() {
             </form>
 
             <div className='flex justify-between gap-2 w-full'>
-                <div className='select-none transition-colors w-1/2 rounded-md active:bg-default-200 hover:bg-default-100 cursor-pointer text-tiny border-1 border-divider p-3 flex flex-col items-center justify-between '>
+                <div onClick={handleGoogleLogin} className='select-none transition-colors w-1/2 rounded-md active:bg-default-200 hover:bg-default-100 cursor-pointer text-tiny border-1 border-divider p-3 flex flex-col items-center justify-between '>
                     <GoogleIcon size={50} />
                     <span>
                         Continue With Google
                     </span>
                 </div>
                 <Divider orientation='vertical' />
-                <div className='select-none w-1/2 transition-colors rounded-md  active:bg-default-200  hover:bg-default-100 cursor-pointer text-tiny border-1 border-divider p-3 flex flex-col items-center justify-end gap-3'>
-                    <FaFacebook size={25} className="text-primary" />
+                <div onClick={githubSignIn} className='select-none w-1/2 transition-colors rounded-md  active:bg-default-200  hover:bg-default-100 cursor-pointer text-tiny border-1 border-divider p-3 flex flex-col items-center justify-end gap-3'>
+                    <FaGithub size={25} className="text-foreground" />
                     <span>
-                        Continue With Facebook
+                        Continue With Github
                     </span>
                 </div>
             </div>
@@ -75,6 +129,8 @@ export function LoginPage() {
                     <Spinner size='lg' color='current' />
                 </div>
             }
+
+
         </div>
     )
 }
@@ -90,33 +146,72 @@ export function SignupPage() {
     const [isSubscribed, setIsSubscribed] = useState<boolean | null>(null);
     const [isSending, setIsSending] = useState(false);
     const [isSignUpSuccess, setIsSignUpSuccess] = useState(false);
+    const [helperText, setHelperText] = useState("")
+
+    const navigate = useNavigate()
+    const githubSignUp = () => {
+        signInWithPopup(auth, new GithubAuthProvider())
+            .then(() => {
+
+                navigate("/user/profile")
+
+
+            }).catch((error) => {
+                console.log(error);
+
+            });
+    }
+    const googleSignup = () => {
+        signInWithPopup(auth, new GoogleAuthProvider())
+            .then(() => {
+
+                navigate("/user/profile")
+
+
+            }).catch((error) => {
+                console.log(error);
+            });
+    }
 
     const handleSignUp = (event: FormEvent) => {
-
         event.preventDefault();
         setIsSending(true)
-        setTimeout(() => {
-            setIsSending(false)
-            setIsSignUpSuccess(true);
-        }, 2000);
+
+        const auth = getAuth();
+        createUserWithEmailAndPassword(auth, userMail, userPassword)
+            .then(() => {
+                setIsSending(false)
+                setIsSignUpSuccess(true)
+                navigate("/user/profile")
+            })
+            .catch((e) => {
+                console.error(e);
+                setIsSending(false);
+                setIsSignUpSuccess(false);
+                setHelperText("Email Already In Use. Try Sign In. \n" + e)
+            })
+
+
 
     }
+
+
     return (
         <div className="flex justify-center items-center gap-10 flex-col  w-full lg:w-[550px] ">
             <h1 className='text-4xl tracking-wider font-serif font-bold'>Create New Account</h1>
             {/* Auth Links */}
             <div className='flex justify-between gap-2 w-full'>
-                <div className='select-none transition-colors w-1/2 rounded-md active:bg-default-200 hover:bg-default-100 cursor-pointer text-tiny border-1 border-divider p-3 flex flex-col items-center justify-between '>
+                <div onClick={googleSignup} className='select-none transition-colors w-1/2 rounded-md active:bg-default-200 hover:bg-default-100 cursor-pointer text-tiny border-1 border-divider p-3 flex flex-col items-center justify-between '>
                     <GoogleIcon size={50} />
                     <span>
                         Continue With Google
                     </span>
                 </div>
                 <Divider orientation='vertical' />
-                <div className='select-none w-1/2 transition-colors rounded-md  active:bg-default-200  hover:bg-default-100 cursor-pointer text-tiny border-1 border-divider p-3 flex flex-col items-center justify-end gap-3'>
-                    <FaFacebook size={25} className="text-primary" />
+                <div onClick={githubSignUp} className='select-none w-1/2 transition-colors rounded-md  active:bg-default-200  hover:bg-default-100 cursor-pointer text-tiny border-1 border-divider p-3 flex flex-col items-center justify-end gap-3'>
+                    <FaGithub size={25} className="text-foreground" />
                     <span>
-                        Continue With Facebook
+                        Continue With Github
                     </span>
                 </div>
             </div>
@@ -153,7 +248,8 @@ export function SignupPage() {
                         <Checkbox value={"false"}>No I am not a subscriber</Checkbox>
                     </CheckboxGroup>
                 </div>
-                <Button type='submit' isDisabled={isSignUpSuccess} radius='sm' variant='solid' color='default' className={twMerge(isSignUpSuccess ? "bg-default" : 'bg-foreground text-background')} size='lg'>  {isSending ? <Spinner size='md' color='current' /> : isSignUpSuccess ? <>Account Created Successfully <MdOutlineDone size={20} /> </> : <><span>Create Account</span> <FaUserPlus size={18} /></>}</Button>
+                {helperText && <p className='text-sm text-white p-2 text-center w-full bg-danger'>{helperText}</p>
+                }                <Button type='submit' isDisabled={isSignUpSuccess} radius='sm' variant='solid' color='default' className={twMerge(isSignUpSuccess ? "bg-default" : 'bg-foreground text-background')} size='lg'>  {isSending ? <Spinner size='md' color='current' /> : isSignUpSuccess ? <>Account Created Successfully <MdOutlineDone size={20} /> </> : <><span>Create Account</span> <FaUserPlus size={18} /></>}</Button>
 
 
             </form >

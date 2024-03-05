@@ -10,6 +10,7 @@ import DynamicProjects from "../pages/DynamicProjects";
 import Resources from "../pages/Resources";
 import { SubscribeForm } from "../components/Intro";
 import Profile from "../pages/Profile";
+import UserGallery from "../pages/UserGallery";
 
 
 const Routing =
@@ -57,6 +58,11 @@ const Routing =
             path: '/user/profile',
             element: <Profile />
         },
+    },
+    "Gallery": {
+        title: "Your Favorite Photos Are Here -IdleCoders ",
+        path: '/user/gallery',
+        element: <UserGallery />
     },
     "ContactPage": {
         title: "Contact With Us ",

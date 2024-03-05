@@ -95,6 +95,14 @@ function Router() {
           }
         />
         <Route
+          path={Routing.Gallery.path}
+          element={
+            <HeadPolish title={Routing.Gallery.title}>
+              {Routing.Gallery.element}
+            </HeadPolish>
+          }
+        />
+        <Route
           path={Routing.NoPage.path}
           element={
             <HeadPolish title={Routing.NoPage.title}>

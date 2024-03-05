@@ -23,8 +23,8 @@ const firebaseConfig = {
     measurementId: "G-P893VZTNWJ"
 };
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+export const FirebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(FirebaseApp);
 export function LoginPage() {
     const [loginEmail, setLoginEmail] = useState("");
     const [loginPassword, setLoginPassword] = useState("")

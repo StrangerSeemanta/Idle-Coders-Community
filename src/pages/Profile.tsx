@@ -3,6 +3,8 @@ import { Card, CardHeader, CardBody, CardFooter, Avatar, Button, Spinner } from 
 import { deleteUser, getAuth, onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
+import { IoIosImages } from "react-icons/io";
+
 
 function Profile() {
     const [user, setUser] = useState<User>(); // Specify the type as User | null
@@ -57,13 +59,13 @@ function Profile() {
             {
                 isLoading ?
                     <>
-                        <div className="w-full h-[80vh] flex justify-center items-center">
+                        <div className="w-full h-screen flex justify-center items-center">
                             <Spinner size="lg" color="danger" />
                         </div>
                     </>
                     : !user ?
 
-                        <div className="flex flex-col gap-y-5 justify-center items-center h-[80vh] w-full">
+                        <div className="flex h-screen flex-col gap-y-5 justify-center items-center w-full">
                             <h1 className='text-4xl font-bold'>
                                 Join Our Community
                             </h1>
@@ -71,10 +73,11 @@ function Profile() {
                             <Button color="danger" radius="sm" variant="solid" disableAnimation size="lg" onPress={() => navigate('/resources/account/login')
                             }>Go To Login Page</Button>
                         </div> :
-                        <div className="w-full h-screen p-10">
+                        <div className="w-full min-h-screen p-10">
 
-                            <div className=" flex flex-col justify-center items-center">
-                                <Card className="max-w-[500px] h-48">
+                            <div className=" ">
+                                <h1 className="text-3xl font-semibold mb-4">User Details</h1>
+                                <Card className="max-w-[400px] h-48">
                                     <CardHeader className="justify-between">
                                         <div className="flex gap-5">
                                             <Avatar isBordered radius="full" size="md" src={user && user.photoURL ? user.photoURL : undefined} />
@@ -94,17 +97,7 @@ function Profile() {
                                                 Log Out
                                             </Button>
                                         )}
-                                        {user && (
-                                            <Button
-                                                color="danger"
-                                                radius="full"
-                                                size="sm"
-                                                variant={"ghost"}
-                                                onPress={handleDelete}
-                                            >
-                                                Delete Account
-                                            </Button>
-                                        )}
+
                                     </CardHeader>
                                     <CardBody className="px-3 py-0 text-small text-default-400">
                                         <p>
@@ -118,19 +111,37 @@ function Profile() {
                                         </span>
                                     </CardBody>
                                     <CardFooter className="gap-3">
-                                        <div className="flex gap-1">
-                                            <p className="font-semibold text-default-400 text-small">4</p>
-                                            <p className=" text-default-400 text-small">Following</p>
-                                        </div>
-                                        <div className="flex gap-1">
-                                            <p className="font-semibold text-default-400 text-small">97.1K</p>
-                                            <p className="text-default-400 text-small">Followers</p>
-                                        </div>
+
+                                        {user && (
+                                            <Button
+                                                color="danger"
+                                                radius="full"
+                                                size="sm"
+                                                variant={"light"}
+                                                onPress={handleDelete}
+                                            >
+                                                Delete Account
+                                            </Button>
+                                        )}
                                     </CardFooter>
                                 </Card>
 
                             </div>
 
+                            <div onClick={() => { return navigate('/user/gallery') }} className="my-10 ">
+
+                                <Card className="max-w-[400px] h-48">
+
+                                    <CardBody className="px-3 group hover:opacity-60 cursor-pointer transition-opacity w-full flex justify-center items-center  py-0 text-small text-success">
+                                        <IoIosImages className="mb-4 group-hover:text-default-400" size={50} />
+                                        <h1 className="group-hover:text-default-400 text-5xl font-bold text-teal-500">
+                                            Gallery
+                                        </h1>
+                                    </CardBody>
+
+                                </Card>
+
+                            </div>
 
                         </div>
             }

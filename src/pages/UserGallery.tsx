@@ -40,13 +40,13 @@ function PhotoGallery() {
         const auth = getAuth(FirebaseApp);
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setCurrentUser(user);
-            setLoading(false); // Set loading to false when user state is determined
         });
 
         return () => unsubscribe();
     }, []);
 
     useEffect(() => {
+
         if (currentUser) {
             const fetchPhotos = async () => {
                 const storage = getStorage(FirebaseApp);
@@ -57,6 +57,8 @@ function PhotoGallery() {
                     const urls = await Promise.all(urlsPromises);
                     const photoData = urls.map((url, index) => ({ id: index, title: `Photo ${index + 1}`, src: url }));
                     setPhotos(photoData);
+                    setLoading(false); // Set loading to false when user state is determined
+
                 } catch (error) {
                     console.error("Error fetching photos:", error);
                 }

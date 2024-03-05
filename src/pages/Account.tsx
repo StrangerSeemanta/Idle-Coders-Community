@@ -12,17 +12,16 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, creat
 
 
 
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyAiXjzf-lTeUI4jagL14nYC8JuiXtWFuiI",
-    authDomain: "idc-login-1.firebaseapp.com",
-    projectId: "idc-login-1",
-    storageBucket: "idc-login-1.appspot.com",
-    messagingSenderId: "729941334830",
-    appId: "1:729941334830:web:bc49381684bcae55c978bf",
-    measurementId: "G-X5HGCGS03C"
-};
 
+const firebaseConfig = {
+    apiKey: "AIzaSyD6ipY96nfPJcR06KwV_vIpnXJJJ6U2aaU",
+    authDomain: "idlecoders-sign-in.firebaseapp.com",
+    projectId: "idlecoders-sign-in",
+    storageBucket: "idlecoders-sign-in.appspot.com",
+    messagingSenderId: "370335361344",
+    appId: "1:370335361344:web:ea01e0dbcf2b8edd2772a5",
+    measurementId: "G-P893VZTNWJ"
+};
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);

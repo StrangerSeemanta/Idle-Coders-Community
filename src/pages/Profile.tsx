@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
 import { FaDatabase } from "react-icons/fa6";
 import Beam from "../components/Beam";
-import Bg from "./../assets/Bg_2.png"
+import Bg from "./../assets/bg-3.png"
+import BeamBasic from "./../assets/beams-basic.png"
 
 function Profile() {
     const [user, setUser] = useState<User>(); // Specify the type as User | null
@@ -61,7 +62,7 @@ function Profile() {
                 isLoading ?
                     <>
                         <div className="w-full h-screen flex justify-center items-center">
-                            <Spinner size="lg" color="danger" />
+                            <Spinner size="lg" color="success" />
                         </div>
                     </>
                     : !user ?
@@ -74,69 +75,87 @@ function Profile() {
                             <Button color="danger" radius="sm" variant="solid" disableAnimation size="lg" onPress={() => navigate('/resources/account/login')
                             }>Go To Login Page</Button>
                         </div> :
-                        <div className="w-full min-h-screen p-10">
+                        <div className="w-full min-h-screen p-10 ">
 
-                            <div className="my-10 dark:bg-default-50 overflow-hidden max-w-[400px]  rounded-medium shadow-medium shadow-black/10 ">
-                                <Card className="max-w-[400px] h-48">
-                                    <CardHeader className="justify-between">
+                            <div className="flex justify-between gap-9 items-center flex-col md:flex-row">
+                                <div className="my-10 px-7 overflow-hidden max-w-xl flex flex-col justify-center items-start w-full h-48  ">
+                                    <div className="flex flex-col h-full w-full justify-center items-start gap-5">
+                                        <h1 className=" flex text-4xl font-bold font-serif text-success">Welcome Back, 👋</h1>
+
                                         <div className="flex gap-5">
-                                            <Avatar isBordered radius="full" size="md" src={user && user.photoURL ? user.photoURL : undefined} />
                                             <div className="flex flex-col gap-1 items-start justify-center">
-                                                <h4 className="text-small font-semibold leading-none text-default-600">{user.displayName}</h4>
-                                                <h5 className="text-small tracking-tight text-default-400">{user.email}</h5>
+                                                <h4 className="text-6xl font-semibold leading-none text-default-600">{user.displayName}</h4>
                                             </div>
                                         </div>
-                                        {user && (
-                                            <Button
-                                                color="default"
-                                                radius="full"
-                                                size="sm"
-                                                variant={"bordered"}
-                                                onPress={handleLogOut}
-                                            >
-                                                Log Out
-                                            </Button>
-                                        )}
+                                    </div>
+                                </div>
 
-                                    </CardHeader>
-                                    <CardBody className="px-3 py-0 text-small text-default-400">
-                                        <p>
-                                            last Sign In Time: {user.metadata.lastSignInTime}
-                                        </p>
-                                        <span className="pt-2">
-                                            Authorized By:
-                                            <span className="py-2 ml-2 uppercase" aria-label="computer" role="img">
-                                                {user.providerData[0].providerId}
+                                {/*  */}
+                                <div className=" my-10 dark:bg-default-50 overflow-hidden w-full max-w-xl h-56 rounded-medium shadow-medium shadow-black/10 ">
+                                    <Card className="max-w-xl h-56">
+                                        <CardHeader className="justify-between">
+                                            <div className="flex gap-5">
+                                                <Avatar isBordered radius="full" size="md" src={user && user.photoURL ? user.photoURL : undefined} />
+                                                <div className="flex flex-col gap-1 items-start justify-center">
+                                                    <h4 className="text-small font-semibold leading-none text-default-600">{user.displayName}</h4>
+                                                    <h5 className="text-small tracking-tight text-default-400">{user.email}</h5>
+
+                                                </div>
+                                            </div>
+                                            {user && (
+                                                <Button
+                                                    color="default"
+                                                    radius="full"
+                                                    size="sm"
+                                                    variant={"bordered"}
+                                                    onPress={handleLogOut}
+                                                >
+                                                    Log Out
+                                                </Button>
+                                            )}
+
+                                        </CardHeader>
+                                        <CardBody className="px-3 py-0 text-small text-default-400">
+                                            <p>
+                                                last Sign In Time: {user.metadata.lastSignInTime}
+                                            </p>
+                                            <span className="pt-2">
+                                                Authorized By:
+                                                <span className="py-2 ml-2 uppercase" aria-label="computer" role="img">
+                                                    {user.providerData[0].providerId}
+                                                </span>
                                             </span>
-                                        </span>
-                                    </CardBody>
-                                    <CardFooter className="gap-3">
+                                            <h5 className="text-sm mt-2 tracking-tight text-default-400">id: {user.uid}</h5>
 
-                                        {user && (
-                                            <Button
-                                                color="danger"
-                                                radius="full"
-                                                size="sm"
-                                                variant={"light"}
-                                                onPress={handleDelete}
-                                            >
-                                                Delete Account
-                                            </Button>
-                                        )}
-                                    </CardFooter>
-                                </Card>
+                                        </CardBody>
+                                        <CardFooter className="gap-3">
 
+                                            {user && (
+                                                <Button
+                                                    color="danger"
+                                                    radius="full"
+                                                    size="sm"
+                                                    variant={"light"}
+                                                    onPress={handleDelete}
+                                                >
+                                                    Delete Account
+                                                </Button>
+                                            )}
+                                        </CardFooter>
+                                    </Card>
+
+                                </div>
                             </div>
 
-                            <div onClick={() => { return navigate('/user/gallery') }} className="my-10 dark:bg-default-50 overflow-hidden max-w-[400px]  rounded-medium shadow-medium shadow-black/10 ">
-                                <Beam imgSrc={Bg} size="contain">
+                            <div onClick={() => { return navigate('/user/storage') }} className="my-10 h-56 dark:bg-default-50 overflow-hidden max-w-full  rounded-medium shadow-medium shadow-black/10 ">
+                                <Beam imgSrc={BeamBasic} size="cover" >
 
-                                    <Card className=" bg-transparent h-48">
+                                    <Card className=" bg-transparent h-56">
 
                                         <CardBody className="px-3 hover:backdrop-blur-sm group first-line: cursor-pointer transition-all w-full flex justify-center items-center  py-0 text-small text-warning">
                                             <FaDatabase className="mb-4 group-hover:text-default-400" size={50} />
                                             <h1 className="group-hover:text-default-500 text-4xl font-bold text-foreground">
-                                                Your Storage
+                                                About You
                                             </h1>
                                         </CardBody>
 
@@ -145,6 +164,22 @@ function Profile() {
 
                             </div>
 
+                            <div onClick={() => { return navigate('/user/storage') }} className="my-10 h-56 dark:bg-default-50 overflow-hidden max-w-full  rounded-medium shadow-medium shadow-black/10 ">
+                                <Beam imgSrc={Bg} size="cover" >
+
+                                    <Card className=" bg-transparent h-56">
+
+                                        <CardBody className="px-3 hover:backdrop-blur-sm group first-line: cursor-pointer transition-all w-full flex justify-center items-center  py-0 text-small text-warning">
+                                            <FaDatabase className="mb-4 group-hover:text-default-400" size={50} />
+                                            <h1 className="group-hover:text-default-500 text-4xl font-bold text-foreground">
+                                                My Storage
+                                            </h1>
+                                        </CardBody>
+
+                                    </Card>
+                                </Beam>
+
+                            </div>
                         </div>
             }
             <Toast open={showToast} onClose={() => setToast(false)}>

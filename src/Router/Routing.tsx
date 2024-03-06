@@ -54,14 +54,14 @@ const Routing =
             path: "/resources/account/signup",
             element: <SignupPage />
         }, "Profile": {
-            title: "Contact With Us ",
+            title: "User Dashboard - IdleCoders",
             path: '/user/profile',
             element: <Profile />
         },
     },
     "Gallery": {
-        title: "Your Favorite Photos Are Here -IdleCoders ",
-        path: '/user/gallery',
+        title: "One Place All You Need To Store -IdleCoders ",
+        path: '/user/storage',
         element: <UserGallery />
     },
     "ContactPage": {

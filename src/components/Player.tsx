@@ -6,8 +6,9 @@ interface Props {
     poster?: string;
     src: string;
     className?: string;
+    height?: string | number;
 }
-function Player({ poster, src, className }: Props) {
+function Player({ poster, src, className, height }: Props) {
     const videoRef = useRef<HTMLVideoElement>(null)
     const [volume, setVolume] = useState<SliderValue>(50);
     const [muted, setMuted] = useState(false);
@@ -85,7 +86,7 @@ function Player({ poster, src, className }: Props) {
     }, [fullScr])
     return (
         <Fragment>
-            <div className={twMerge("relative w-auto h-auto ", className)} >
+            <div style={{ height: height }} className={twMerge("relative w-auto h-auto cursor-pointer ", className)} >
                 <div onMouseEnter={() => { setHideControls(false) }} onMouseLeave={handleHideControls} style={{ opacity: hideControls ? 0 : 1, transitionDelay: hideControls ? "2500ms" : "0ms", transitionDuration: hideControls ? "450ms" : "50ms" }} className="video_controls transition-all ease-soft-spring   absolute z-30 bottom-0 left-0 w-full h-[10vh] max-h-[10vh] bg-gradient-to-t  to-00% from-primary  to-foreground/0 backdrop-blur-sm">
                     <div className="w-full h-full flex justify-between items-end py-1 px-2">
                         {/* Play Pause BTN */}

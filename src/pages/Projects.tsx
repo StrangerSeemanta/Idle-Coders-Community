@@ -18,7 +18,7 @@ interface FilterButtonProps {
     className?: string;
     isActive?: boolean;
 }
-const FilterButton = ({ filterName, isActive, onClick, className }: FilterButtonProps) => {
+export const FilterButton = ({ filterName, isActive, onClick, className }: FilterButtonProps) => {
     return (
         <div
             onClick={onClick}

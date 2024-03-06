@@ -1,12 +1,13 @@
 import { Button, Slider, SliderValue, Spinner } from "@nextui-org/react";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import getVideoDuration from "../modules/getVideoDuration";
+import { twMerge } from "tailwind-merge";
 interface Props {
     poster?: string;
     src: string;
-
+    className?: string;
 }
-function Player({ poster, src }: Props) {
+function Player({ poster, src, className }: Props) {
     const videoRef = useRef<HTMLVideoElement>(null)
     const [volume, setVolume] = useState<SliderValue>(50);
     const [muted, setMuted] = useState(false);
@@ -84,7 +85,7 @@ function Player({ poster, src }: Props) {
     }, [fullScr])
     return (
         <Fragment>
-            <div className="relative w-auto h-auto " >
+            <div className={twMerge("relative w-auto h-auto ", className)} >
                 <div onMouseEnter={() => { setHideControls(false) }} onMouseLeave={handleHideControls} style={{ opacity: hideControls ? 0 : 1, transitionDelay: hideControls ? "2500ms" : "0ms", transitionDuration: hideControls ? "450ms" : "50ms" }} className="video_controls transition-all ease-soft-spring   absolute z-30 bottom-0 left-0 w-full h-[10vh] max-h-[10vh] bg-gradient-to-t  to-00% from-primary  to-foreground/0 backdrop-blur-sm">
                     <div className="w-full h-full flex justify-between items-end py-1 px-2">
                         {/* Play Pause BTN */}
@@ -212,7 +213,7 @@ function Player({ poster, src }: Props) {
                 </div>
 
                 {isVideoLoading && <div className={" bg-default-300/40 backdrop-blur-sm px-2 py-2 w-20 h-20 flex justify-center items-center absolute z-40 top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] transition-all ease-soft-spring duration-500 "}>
-                    <h3 className="text-2xl  font-bold text-background  ">
+                    <h3 className="text-2xl  font-bold text-background rounded-full  ">
                         <Spinner aria-label="loader" color="danger" />
                     </h3>
                 </div>}

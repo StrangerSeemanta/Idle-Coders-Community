@@ -3,8 +3,9 @@ import { Card, CardHeader, CardBody, CardFooter, Avatar, Button, Spinner } from 
 import { deleteUser, getAuth, onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
-import { IoIosImages } from "react-icons/io";
-
+import { FaDatabase } from "react-icons/fa6";
+import Beam from "../components/Beam";
+import Bg from "./../assets/Bg_2.png"
 
 function Profile() {
     const [user, setUser] = useState<User>(); // Specify the type as User | null
@@ -75,8 +76,7 @@ function Profile() {
                         </div> :
                         <div className="w-full min-h-screen p-10">
 
-                            <div className=" ">
-                                <h1 className="text-3xl font-semibold mb-4">User Details</h1>
+                            <div className="my-10 dark:bg-default-50 overflow-hidden max-w-[400px]  rounded-medium shadow-medium shadow-black/10 ">
                                 <Card className="max-w-[400px] h-48">
                                     <CardHeader className="justify-between">
                                         <div className="flex gap-5">
@@ -128,18 +128,20 @@ function Profile() {
 
                             </div>
 
-                            <div onClick={() => { return navigate('/user/gallery') }} className="my-10 ">
+                            <div onClick={() => { return navigate('/user/gallery') }} className="my-10 dark:bg-default-50 overflow-hidden max-w-[400px]  rounded-medium shadow-medium shadow-black/10 ">
+                                <Beam imgSrc={Bg} size="contain">
 
-                                <Card className="max-w-[400px] h-48">
+                                    <Card className=" bg-transparent h-48">
 
-                                    <CardBody className="px-3 group hover:opacity-60 cursor-pointer transition-opacity w-full flex justify-center items-center  py-0 text-small text-success">
-                                        <IoIosImages className="mb-4 group-hover:text-default-400" size={50} />
-                                        <h1 className="group-hover:text-default-400 text-5xl font-bold text-teal-500">
-                                            Gallery
-                                        </h1>
-                                    </CardBody>
+                                        <CardBody className="px-3 hover:backdrop-blur-sm group first-line: cursor-pointer transition-all w-full flex justify-center items-center  py-0 text-small text-warning">
+                                            <FaDatabase className="mb-4 group-hover:text-default-400" size={50} />
+                                            <h1 className="group-hover:text-default-500 text-4xl font-bold text-foreground">
+                                                Your Storage
+                                            </h1>
+                                        </CardBody>
 
-                                </Card>
+                                    </Card>
+                                </Beam>
 
                             </div>
 
@@ -148,7 +150,7 @@ function Profile() {
             <Toast open={showToast} onClose={() => setToast(false)}>
                 {toastMsg}
             </Toast>
-        </Fragment>
+        </Fragment >
     )
 }
 

@@ -28,7 +28,9 @@ function Profile() {
             } else {
                 // No user is signed in
                 setUser(undefined);
-                setIsLoading(false)
+                setIsLoading(false);
+                setToast(true);
+                setToastMsg("No User Found")
             }
         });
 

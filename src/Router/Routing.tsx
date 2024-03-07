@@ -9,8 +9,9 @@ import Account, { LoginPage, SignupPage } from "../pages/Account";
 import DynamicProjects from "../pages/DynamicProjects";
 import Resources from "../pages/Resources";
 import { SubscribeForm } from "../components/Intro";
-import Profile from "../pages/Profile";
 import UserGallery from "../pages/UserGallery";
+import UserDashboard from "../pages/UserDashboard";
+import Profile from "../pages/Profile";
 
 
 const Routing =
@@ -53,17 +54,33 @@ const Routing =
             title: "Create New Account - Idlecoders",
             path: "/resources/account/signup",
             element: <SignupPage />
-        }, "Profile": {
+        },
+    },
+    "UserDashboard": {
+        title: "User Dashboard - IdleCoders",
+        path: '/user',
+        element: <UserDashboard />,
+        "Profile": {
             title: "User Dashboard - IdleCoders",
             path: '/user/profile',
             element: <Profile />
         },
+        "UserBlogs": {
+            title: "My Blogs - IdleCoders",
+            path: '/user/blogs',
+            element: <Profile />
+        },
+        "Settings": {
+            title: "Update Your Settings - IdleCoders",
+            path: '/user/settings',
+            element: <Profile />
+        }, "Gallery": {
+            title: "One Place All You Need To Store -IdleCoders ",
+            path: '/user/storage',
+            element: <UserGallery />
+        },
     },
-    "Gallery": {
-        title: "One Place All You Need To Store -IdleCoders ",
-        path: '/user/storage',
-        element: <UserGallery />
-    },
+
     "ContactPage": {
         title: "Contact With Us ",
         path: 'contact',

@@ -20,4 +20,3 @@ export const downloadFile = (url: string) => {
   anchor.download = url;
   anchor.click();
 };
-// Example usage

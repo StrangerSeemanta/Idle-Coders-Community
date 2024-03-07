@@ -3,7 +3,7 @@ import { Fragment, ReactNode, useEffect, useMemo, useState, } from 'react'
 import { twMerge } from 'tailwind-merge';
 import { MdExplore } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
-import { SiGoogledocs } from "react-icons/si";
+import { SlDocs } from "react-icons/sl";
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 
 import SidebarItemButton from './SidebarItemButton';
@@ -44,7 +44,7 @@ function Sidebar({ children, className }: SidebarProps) {
             {
                 label: "Blogs",
                 href: "/resources/blogs",
-                Icon: SiGoogledocs,
+                Icon: SlDocs,
                 isActive: location.pathname === "/resources/blogs" || location.pathname.includes('/resources/blogs')
 
             },
@@ -71,6 +71,7 @@ function Sidebar({ children, className }: SidebarProps) {
                                 <SidebarItemButton
 
                                     key={route.label + String(index)}
+                                    isActiveClass={"bg-danger/90 dark:bg-danger/70 text-white"}
                                     {...route}
                                 />
                             ))

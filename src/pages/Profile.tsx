@@ -1,13 +1,14 @@
 import { Fragment, useState, useEffect } from "react";
-import { Card, CardHeader, CardBody, CardFooter, Avatar, Button, Spinner } from "@nextui-org/react";
-import { deleteUser, getAuth, onAuthStateChanged, signOut, User } from 'firebase/auth';
-import { useNavigate } from "react-router-dom";
+import { Button, Image, Spinner } from "@nextui-org/react";
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import { Link, useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
-import { FaDatabase } from "react-icons/fa6";
-import Beam from "../components/Beam";
-import Bg from "./../assets/bg-3.png"
-import BeamBasic from "./../assets/bg.png"
-import { FaUser } from "react-icons/fa";
+import Cover from '../assets/cover-01.png';
+import UserSix from '../assets/user-06.png';
+
+import { FaCamera } from "react-icons/fa6";
+import { FaFacebook, FaInstagramSquare } from "react-icons/fa";
+import GoogleIcon from "../Icons/GoogleIcon";
 
 function Profile() {
     const [user, setUser] = useState<User>(); // Specify the type as User | null
@@ -34,28 +35,17 @@ function Profile() {
         // Clean up subscription
         return () => unsubscribe();
     }, []);
-    const handleLogOut = () => {
-        const auth = getAuth();
-        signOut(auth).
-            then(() => {
-                setToast(true);
-                setToastMsg("Successfully Logged out")
 
-            })
-            .catch(er => {
-                console.log(er)
-            })
-    };
-    const handleDelete = () => {
-        setIsLoading(true)
-        if (user) {
-            deleteUser(user).then(() => {
-                setIsLoading(false)
-                setToast(true)
-                setToastMsg("Permanently Deleted Your Account ")
-            })
-        }
-    };
+    // const handleDelete = () => {
+    //     setIsLoading(true)
+    //     if (user) {
+    //         deleteUser(user).then(() => {
+    //             setIsLoading(false)
+    //             setToast(true)
+    //             setToastMsg("Permanently Deleted Your Account ")
+    //         })
+    //     }
+    // };
 
     return (
         <Fragment>
@@ -76,112 +66,113 @@ function Profile() {
                             <Button color="danger" radius="sm" variant="solid" disableAnimation size="lg" onPress={() => navigate('/resources/account/login')
                             }>Go To Login Page</Button>
                         </div> :
-                        <div className="w-full min-h-screen p-10 ">
+                        <div className="w-full min-h-screen py-4 px-5 ">
+                            <h1 className="text-2xl font-bold ">Profile</h1>
+                            <div className="border border-default bg-default-100 rounded-small overflow-hidden shadow-lg shadow-black/20 mt-10 pb-14">
 
-                            <div className="flex justify-between gap-9 items-center flex-col md:flex-row">
-                                <div className="my-10 px-7 overflow-hidden max-w-xl flex flex-col justify-center items-start w-full h-48  ">
-                                    <div className="flex flex-col h-full w-full justify-center items-start gap-5">
-                                        <h1 className=" flex text-4xl font-bold font-serif text-success">Welcome Back, 👋</h1>
+                                {/* Cover Pic */}
+                                <div className="relative overflow-hidden z-20   ">
+                                    <Image src={Cover} radius="none" />
+                                    <label htmlFor="change-cover" className="absolute bottom-5 right-5 z-50 bg-primary text-white py-2 px-3 text-sm flex justify-center items-center gap-x-2 shadow-xl cursor-pointer hover:brightness-125 transition-all">
+                                        <FaCamera size={20} />
+                                        <span>Edit Cover Photo</span>
+                                        <input id="change-cover" type="file" className="hidden" />
+                                    </label>
+                                </div>
 
-                                        <div className="flex gap-5">
-                                            <div className="flex flex-col gap-1 items-start justify-center">
-                                                <h4 className="text-6xl font-semibold leading-none text-default-600">{user.displayName}</h4>
-                                            </div>
+                                {/* User Pic */}
+                                <div className="px-4 pb-6 text-center lg:pb-8 xl:pb-11.5">
+                                    <div className="relative z-30 mx-auto -mt-24 h-[7.5rem] w-full max-w-[7.5rem] rounded-full bg-white/20 p-1 backdrop-blur-sm sm:h-[11rem] sm:max-w-[11rem] sm:p-3">
+                                        <div className=" relative drop-shadow-md">
+                                            <img src={UserSix} alt="profile" />
+                                            <label
+                                                htmlFor="profile"
+                                                className="absolute bottom-0 right-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white hover:bg-opacity-90 sm:bottom-2 sm:-right-1"
+                                            >
+                                                <FaCamera size={15} />
+                                                <input
+                                                    type="file"
+                                                    name="profile"
+                                                    id="profile"
+                                                    className="hidden"
+                                                />
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/*  */}
-                                <div className=" my-10 dark:bg-default-50 overflow-hidden w-full max-w-xl h-56 rounded-medium shadow-medium shadow-black/10 ">
-                                    <Card className="max-w-xl h-56">
-                                        <CardHeader className="justify-between">
-                                            <div className="flex gap-5">
-                                                <Avatar isBordered radius="full" size="md" src={user && user.photoURL ? user.photoURL : undefined} />
-                                                <div className="flex flex-col gap-1 items-start justify-center">
-                                                    <h4 className="text-small font-semibold leading-none text-default-600">{user.displayName}</h4>
-                                                    <h5 className="text-small tracking-tight text-default-400">{user.email}</h5>
-
-                                                </div>
-                                            </div>
-                                            {user && (
-                                                <Button
-                                                    color="default"
-                                                    radius="full"
-                                                    size="sm"
-                                                    variant={"bordered"}
-                                                    onPress={handleLogOut}
-                                                >
-                                                    Log Out
-                                                </Button>
-                                            )}
-
-                                        </CardHeader>
-                                        <CardBody className="px-3 py-0 text-small text-default-400">
-                                            <p>
-                                                last Sign In Time: {user.metadata.lastSignInTime}
-                                            </p>
-                                            <span className="pt-2">
-                                                Authorized By:
-                                                <span className="py-2 ml-2 uppercase" aria-label="computer" role="img">
-                                                    {user.providerData[0].providerId}
-                                                </span>
+                                {/* Details */}
+                                <div className=" text-center">
+                                    <h3 className="mb-1.5 text-2xl font-semibold text-foreground">
+                                        Danish Heilium
+                                    </h3>
+                                    <p className="font-medium text-default-500">Ui/Ux Designer</p>
+                                    <div className="mx-auto mt-4 mb-5 grid max-w-[23rem] grid-cols-3 rounded-md border-2 border-default-100  py-4 shadow-md  dark:bg-[#37404F]">
+                                        <div className="flex flex-col items-center justify-center gap-1 border-r-2 border-stroke px-4  sm:flex-row">
+                                            <span className="font-semibold text-foreground">
+                                                259
                                             </span>
-                                            <h5 className="text-sm mt-2 tracking-tight text-default-400">id: {user.uid}</h5>
+                                            <span className="text-sm">Posts</span>
+                                        </div>
+                                        <div className="flex flex-col items-center justify-center gap-1 border-r-2 border-stroke px-4  sm:flex-row">
+                                            <span className="font-semibold text-foreground">
+                                                129K
+                                            </span>
+                                            <span className="text-sm">Followers</span>
+                                        </div>
+                                        <div className="flex flex-col items-center justify-center gap-1  px-4  sm:flex-row">
+                                            <span className="font-semibold text-foreground">
+                                                2K
+                                            </span>
+                                            <span className="text-sm">Following</span>
+                                        </div>
+                                    </div>
 
-                                        </CardBody>
-                                        <CardFooter className="gap-3">
+                                    <div className="mx-auto max-w-[45rem] my-10">
+                                        <h4 className="font-semibold text-foreground">
+                                            About Me
+                                        </h4>
+                                        <p className="mt-7 text-sm text-default-500 tracking-wide">
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                            Pellentesque posuere fermentum urna, eu condimentum mauris
+                                            tempus ut. Donec fermentum blandit aliquet. Etiam dictum dapibus
+                                            ultricies. Sed vel aliquet libero. Nunc a augue fermentum,
+                                            pharetra ligula sed, aliquam lacus.
+                                        </p>
+                                    </div>
 
-                                            {user && (
-                                                <Button
-                                                    color="danger"
-                                                    radius="full"
-                                                    size="sm"
-                                                    variant={"light"}
-                                                    onPress={handleDelete}
-                                                >
-                                                    Delete Account
-                                                </Button>
-                                            )}
-                                        </CardFooter>
-                                    </Card>
+                                    {/* Follow */}
+                                    <div className="mt-8">
+                                        <h4 className="mb-3 font-medium text-foreground">
+                                            Follow me on
+                                        </h4>
+                                        <div className="flex items-center justify-between max-w-[11rem] mx-auto gap-3.5">
+                                            <Link
+                                                to="#"
+                                                className="text-primary-500 hover:opacity-70 transition-opacity"
+                                                aria-label="social-icon"
+                                            >
+                                                <FaFacebook size={25} />
+                                            </Link>
+                                            <Link
+                                                to="#"
+                                                className="text-default-500 hover:opacity-70 transition-opacity"
+                                                aria-label="social-icon"
+                                            >
+                                                <GoogleIcon size={45} />
+                                            </Link>
+                                            <Link
+                                                to="#"
+                                                className="text-danger-500 hover:opacity-70 transition-opacity"
+                                                aria-label="social-icon"
+                                            >
+                                                <FaInstagramSquare size={25} />
+                                            </Link>
 
+
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div onClick={() => { return navigate('/user/storage') }} className="my-10 h-56 dark:bg-default-50 overflow-hidden max-w-full  rounded-medium shadow-medium shadow-black/10 ">
-                                <Beam imgSrc={BeamBasic} size="contain" anchor="top" >
-
-                                    <Card className=" bg-transparent h-56">
-
-                                        <CardBody className="px-3 hover:backdrop-blur-sm group first-line: cursor-pointer transition-all w-full flex justify-center items-center  py-0 text-small text-danger">
-                                            <div className="flex justify-center items-center w-20 h-20 rounded-full bg-danger text-white">
-                                                <FaUser className="" size={40} />
-                                            </div>
-                                            <h1 className="group-hover:text-default-500 text-4xl font-bold text-danger">
-                                                About You
-                                            </h1>
-                                        </CardBody>
-
-                                    </Card>
-                                </Beam>
-
-                            </div>
-
-                            <div onClick={() => { return navigate('/user/storage') }} className="my-10 h-56 dark:bg-default-50 overflow-hidden max-w-full  rounded-medium shadow-medium shadow-black/10 ">
-                                <Beam imgSrc={Bg} size="cover" >
-
-                                    <Card className=" bg-transparent h-56">
-
-                                        <CardBody className="px-3 hover:backdrop-blur-sm group first-line: cursor-pointer transition-all w-full flex justify-center items-center  py-0 text-small text-warning">
-                                            <FaDatabase className="mb-4 group-hover:text-default-400" size={50} />
-                                            <h1 className="group-hover:text-default-500 text-4xl font-bold text-foreground">
-                                                My Storage
-                                            </h1>
-                                        </CardBody>
-
-                                    </Card>
-                                </Beam>
-
                             </div>
                         </div>
             }

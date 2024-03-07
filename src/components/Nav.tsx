@@ -119,7 +119,7 @@ export default function Nav() {
 
   return (
     <>
-      <Navbar isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}
+      <Navbar shouldHideOnScroll isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}
         classNames={{
 
           wrapper: [
@@ -238,7 +238,7 @@ export default function Nav() {
           ))}
         </NavbarMenu>
       </Navbar >
-      <Divider />
+      <Divider className="bg-default/30" />
     </>
   );
 }

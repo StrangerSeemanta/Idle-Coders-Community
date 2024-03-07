@@ -11,10 +11,12 @@ import { FirebaseApp } from "./Account";
 import Toast from "../components/Toast";
 import { getFileType } from "../modules/getUserDetails";
 import Player from "../components/Player";
-import { IoIosDocument, IoIosDownload, IoMdRemoveCircle } from "react-icons/io";
+import { IoIosDownload, IoMdRemoveCircle } from "react-icons/io";
 import { FilterButton } from "./Projects";
 import { twMerge } from "tailwind-merge";
-import { FaPlay, FaVideo } from "react-icons/fa";
+import { FaFileAudio, FaFileDownload, FaFilePdf, FaPlay, FaVideo } from "react-icons/fa";
+import AudioPlayer from 'react-h5-audio-player';
+import '../react-h5-audio-player.css';
 interface Photo {
     title: string;
     src: string;
@@ -68,27 +70,53 @@ const PhotoCard = memo(({ title, src, filename, ftype, onDelete }: Photo) => {
                     </ModalContent>
                 </Modal>
             </>;
-        } else if (ftype.includes("application/")) {
+        } else if (ftype.includes("application/pdf")) {
             return (
                 <div onClick={onOpen} className="w-full h-[30vh] flex cursor-pointer  justify-center items-center">
-                    <IoIosDocument size={60} className="text-danger" />
+                    <FaFilePdf size={60} className="text-danger" />
                     <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="full" className="p-4">
                         <ModalContent>
 
                             {(onClose) => (
                                 <>
                                     <ModalBody className="h-full">
-                                        {
-                                            ftype === "application/pdf" ?
-                                                <iframe src={src} width={"100%"} className="h-full mx-auto" />
-                                                :
-                                                <>
-                                                    <iframe src={src} className="hidden mx-auto" />
-                                                    <h1 className="w-full h-full text-3xl flex gap-2 justify-center items-center">
-                                                        <IoIosDownload size={40} />
-                                                        Download This File To Open</h1>
-                                                </>
-                                        }
+
+
+                                        <iframe src={src} width={"100%"} className="h-full mx-auto" />
+
+                                    </ModalBody>
+                                    <ModalFooter className="flex justify-evenly ">
+                                        <p className="text-medium font-bold">{filename}</p>
+                                        <Button onPress={onClose} radius="sm" variant="ghost" color="danger">Close</Button></ModalFooter>
+
+                                </>
+                            )}
+                        </ModalContent>
+                    </Modal>
+                </div>
+
+            )// If file type is application (e.g., PDF), render document icon
+        } else if (ftype.includes("audio/")) {
+            return (
+                <div onClick={onOpen} className="w-full h-[30vh] flex cursor-pointer  justify-center items-center">
+                    <FaFileAudio size={60} className="text-danger" />
+                    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="full" className="p-4">
+                        <ModalContent>
+
+                            {(onClose) => (
+                                <>
+                                    <ModalBody className="h-full flex justify-center items-center">
+                                        <>
+                                            <AudioPlayer
+                                                autoPlay={false}
+
+                                                className=" max-w-lg rounded-medium "
+                                                volume={.5}
+                                                src={src}
+                                                onPlay={e => console.log("onPlay ", e)}
+                                            // other props here
+                                            />
+                                        </>
                                     </ModalBody>
                                     <ModalFooter className="flex justify-evenly ">
                                         <p className="text-medium font-bold">{filename}</p>
@@ -103,7 +131,35 @@ const PhotoCard = memo(({ title, src, filename, ftype, onDelete }: Photo) => {
             )// If file type is application (e.g., PDF), render document icon
         }
         else {
-            return null; // If file type is not supported, return null
+            return (
+                <div onClick={onOpen} className="w-full h-[30vh] flex cursor-pointer  justify-center items-center">
+                    <FaFileDownload size={60} className="text-danger" />
+                    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="full" className="p-4">
+                        <ModalContent>
+
+                            {(onClose) => (
+                                <>
+                                    <ModalBody className="h-full">
+
+                                        <>
+                                            <iframe src={src} className="hidden mx-auto" />
+                                            <h1 className="w-full h-full text-3xl flex gap-2 justify-center items-center">
+                                                <IoIosDownload size={40} />
+                                                Download This File To Open</h1>
+                                        </>
+
+                                    </ModalBody>
+                                    <ModalFooter className="flex justify-evenly ">
+                                        <p className="text-medium font-bold">{filename}</p>
+                                        <Button onPress={onClose} radius="sm" variant="ghost" color="danger">Close</Button></ModalFooter>
+
+                                </>
+                            )}
+                        </ModalContent>
+                    </Modal>
+                </div>
+
+            ); // If file type is not supported, return null
         }
 
     };
@@ -304,7 +360,7 @@ function UserGallery() {
         <Fragment>
             {/* Filter UI */}
             {/* Filter UI */}
-            <div className="sticky top-[10vh] bg-background/50 backdrop-blur-md z-50 flex flex-col-reverse  lg:flex-row items-start lg:items-center  lg:justify-between mb-4 p-3 w-full">
+            <div className="bg-default-50 backdrop-saturate-150 backdrop-blur-lg z-50 flex flex-col-reverse  lg:flex-row items-start lg:items-center  lg:justify-between mb-4 p-3 w-full">
                 <div className="relative flex items-center gap-3 overflow-x-auto w-full lg:w-2/3 cscroll pb-3 mr-4">
                     {filterKeys.map((name, index) => (
                         <FilterButton
@@ -317,13 +373,13 @@ function UserGallery() {
                             }} />
                     ))}
                 </div>
-                <div className="flex justify-center
-                            items-center pb-3 gap-2">
+                <div className="flex flex-col sm:flex-row sm:justify-center
+                            sm:items-center pb-3 gap-2">
                     <Input isClearable value={searchQuery} startContent={<IoSearch size={20} className="inline-block mr-2" />
                     } type="text" radius="sm"
                         placeholder="Search By File Name..."
                         onValueChange={setSearchQuery} variant="bordered" className="w-60  " size="sm" />
-                    <div onClick={onOpen} className="uppercase text-medium border-2 border-foreground  bg-foreground text-background cursor-pointer hover:opacity-80 transition-opacity font-bold py-2 px-5 rounded">Upload</div>
+                    <div onClick={onOpen} className="uppercase text-center text-medium border-2 border-foreground  bg-foreground text-background cursor-pointer hover:opacity-80 transition-opacity font-bold py-2 px-5 rounded">Upload</div>
                 </div>
 
             </div>

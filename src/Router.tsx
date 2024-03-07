@@ -86,22 +86,40 @@ function Router() {
             </HeadPolish>
           } />
 
+        {/* Nested Routing For Profile Navigation */}
         <Route
-          path={Routing.Account.Profile.path}
+          path={Routing.UserDashboard.path}
           element={
-            <HeadPolish title={Routing.Account.Profile.title}>
-              {Routing.Account.Profile.element}
-            </HeadPolish>
+            Routing.UserDashboard.element
           }
-        />
-        <Route
-          path={Routing.Gallery.path}
-          element={
-            <HeadPolish title={Routing.Gallery.title}>
-              {Routing.Gallery.element}
+        >
+          <Route path={Routing.UserDashboard.Profile.path} element={
+            <HeadPolish title={Routing.UserDashboard.Profile.title}>
+              {Routing.UserDashboard.Profile.element}
             </HeadPolish>
-          }
-        />
+          } />
+          <Route path={Routing.UserDashboard.UserBlogs.path} element={
+            <HeadPolish title={Routing.UserDashboard.UserBlogs.title}>
+              {Routing.UserDashboard.UserBlogs.element}
+            </HeadPolish>
+          } />
+          <Route path={Routing.UserDashboard.Settings.path} element={
+            <HeadPolish title={Routing.UserDashboard.Settings.title}>
+              {Routing.UserDashboard.Settings.element}
+            </HeadPolish>
+          } />
+          <Route
+            path={Routing.UserDashboard.Gallery.path}
+            element={
+              <HeadPolish title={Routing.UserDashboard.Gallery.title}>
+                {Routing.UserDashboard.Gallery.element}
+              </HeadPolish>
+            }
+          />
+        </Route>
+        {/* Nested Routing For Profile Navigation End*/}
+
+
         <Route
           path={Routing.NoPage.path}
           element={

@@ -106,9 +106,9 @@ function Profile() {
                                 {/* Details */}
                                 <div className=" text-center">
                                     <h3 className="mb-1.5 text-2xl font-semibold text-foreground">
-                                        Danish Heilium
+                                        {user.displayName}
                                     </h3>
-                                    <p className="font-medium text-default-500">Ui/Ux Designer</p>
+                                    <p className="font-medium text-default-500">{user.email}</p>
                                     <div className="mx-auto mt-4 mb-5 grid max-w-[23rem] grid-cols-3 rounded-md border-2 border-default-100  py-4 shadow-md  dark:bg-[#37404F]">
                                         <div className="flex flex-col items-center justify-center gap-1 border-r-2 border-stroke px-4  sm:flex-row">
                                             <span className="font-semibold text-foreground">

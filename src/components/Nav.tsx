@@ -119,7 +119,7 @@ export default function Nav() {
 
   return (
     <>
-      <Navbar shouldHideOnScroll isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}
+      <Navbar isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}
         classNames={{
 
           wrapper: [

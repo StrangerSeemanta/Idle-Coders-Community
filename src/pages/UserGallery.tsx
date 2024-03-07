@@ -147,6 +147,7 @@ function UserGallery() {
     const [selectedChips, setSelectedChips] = useState<string>("all"); // Default to "all"
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [filterKeys, setFilterKeys] = useState<string[]>(["all"])
+    const { isOpen, onOpenChange, onOpen } = useDisclosure()
     // Effect hook to fetch user and photos data
     useEffect(() => {
         const auth = getAuth(FirebaseApp);
@@ -302,35 +303,39 @@ function UserGallery() {
     return (
         <Fragment>
             {/* Filter UI */}
+            {/* Filter UI */}
+            <div className="sticky top-[10vh] bg-background/50 backdrop-blur-md z-50 flex flex-col-reverse  lg:flex-row items-start lg:items-center  lg:justify-between mb-4 p-3 w-full">
+                <div className="relative flex items-center gap-3 overflow-x-auto w-full lg:w-2/3 cscroll pb-3 mr-4">
+                    {filterKeys.map((name, index) => (
+                        <FilterButton
+                            className={
+                                twMerge("uppercase text-lg border-2 border-foreground transition-colors  font-bold py-3 px-5 rounded", name === selectedChips ? "bg-foreground text-background dark:hover:bg-foreground-500 hover:bg-foreground-700" : "bg-background dark:hover:bg-foreground-500 text-foreground hover:text-background hover:bg-foreground")}
+                            key={name + String(index)}
+                            filterName={name}
+                            onClick={() => {
+                                handleChipToggle(name)
+                            }} />
+                    ))}
+                </div>
+                <div className="flex justify-center
+                            items-center pb-3 gap-2">
+                    <Input isClearable value={searchQuery} startContent={<IoSearch size={20} className="inline-block mr-2" />
+                    } type="text" radius="sm"
+                        placeholder="Search By File Name..."
+                        onValueChange={setSearchQuery} variant="bordered" className="w-60  " size="sm" />
+                    <div onClick={onOpen} className="uppercase text-medium border-2 border-foreground  bg-foreground text-background cursor-pointer hover:opacity-80 transition-opacity font-bold py-2 px-5 rounded">Upload</div>
+                </div>
 
+            </div>
             {
                 loading ? (
-                    <div className="h-screen w-full flex justify-center items-center">
+                    <div className="h-[70vh] w-full flex justify-center items-center">
                         <Spinner size="lg" color="success" label="Processing Your Items ..." />
                     </div>
                 ) : currentUser ? (
                     <>
-                        <div className="flex items-center justify-between mb-4 p-3 w-full">
-                            <div className="relative flex items-center gap-3 overflow-x-auto w-2/3 cscroll pb-3 mr-4">
-                                {filterKeys.map((name, index) => (
-                                    <FilterButton
-                                        className={
-                                            twMerge("uppercase text-lg border-2 border-foreground transition-colors  font-bold py-3 px-5 rounded", name === selectedChips ? "bg-foreground text-background dark:hover:bg-foreground-500 hover:bg-foreground-700" : "bg-background dark:hover:bg-foreground-500 text-foreground hover:text-background hover:bg-foreground")}
-                                        key={name + String(index)}
-                                        filterName={name}
-                                        onClick={() => {
-                                            handleChipToggle(name)
-                                        }} />
-                                ))}
-                            </div>
-                            <Input isClearable value={searchQuery} startContent={<IoSearch size={20} className="inline-block mr-2" />
-                            } type="text" radius="sm"
-                                placeholder="Search By File Name..."
-                                onValueChange={setSearchQuery} variant="bordered" className="w-60 pb-3 " size="sm" />
 
-
-
-                        </div>
+                        {/* Photos Grid */}
                         <div className="grid min-h-screen  items-start justify-between grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-5 px-4">
                             {filterPhotos(photos).map((photo, index) => (
                                 <PhotoCard
@@ -342,7 +347,28 @@ function UserGallery() {
                                     onDelete={() => handleDelete(photo.filename)}
                                 />
                             ))}
-                            <div className="hover:bg-foreground-100 dark:hover:bg-default-50 transition-colors group animate-appearance-in  p-4 flex flex-col justify-center items-center gap-5 shadow-lg shadow-black/10 h-[50vh] rounded-medium border-1 border-default">
+
+                        </div>
+                    </>
+                ) : (
+                    <div className="w-full h-[70vh] flex flex-col items-center justify-center gap-8">
+                        <h1 className="text-2xl text-danger font-bold">You Need To Log in first</h1>
+                        <Button onPress={() => navigate("/resources/account/login")} color="danger" variant="shadow" size="lg" radius="sm">
+                            Log In
+                        </Button>
+                    </div>
+                )
+            }
+            <Toast open={showToast} onClose={() => setToast(false)}>
+                {toastMsg}
+            </Toast>
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl" className="p-4">
+                <ModalContent>
+
+                    <>
+
+                        <ModalBody className="h-full flex justify-center items-center">
+                            <div className="w-full hover:bg-foreground-100 dark:hover:bg-default-50 transition-colors group animate-appearance-in  p-4 flex flex-col justify-center items-center gap-5 shadow-lg shadow-black/10 h-[50vh] rounded-medium border-1 border-default">
                                 <Card className="w-full bg-background group-hover:bg-foreground-100 dark:group-hover:bg-default-50 border-none shadow-none h-full">
                                     <CardBody className="px-3 py-0 text-small text-default-400">
                                         <input ref={imageRef} className="hidden" type="file" id="upload-pic" onChange={handleFileInputChange} />
@@ -373,37 +399,34 @@ function UserGallery() {
                                             )}
                                         </label>
                                     </CardBody>
-                                    <CardFooter className="justify-between">
-                                        <div className="flex gap-2 w-full">
-                                            <Button
-                                                color="success"
-                                                className="bg-default-400 hover:bg-foreground text-background"
-                                                radius="sm"
-                                                fullWidth
-                                                size="md"
-                                                variant="solid"
-                                                onPress={handleUploadFile}
-                                            >
-                                                Upload
-                                            </Button>
-                                        </div>
+                                    <CardFooter>
+                                        <span className="text-tiny font-mono font-semibold italic">
+                                            If you close this popup or reload this page, your upload will be cancelled
+                                        </span>
                                     </CardFooter>
                                 </Card>
                             </div>
-                        </div>
+                        </ModalBody>
+                        <ModalFooter className="flex justify-center">
+
+                            <div className="flex gap-2 w-full animate-appearance-in">
+                                <Button
+                                    color="success"
+                                    className="bg-foreground text-background"
+                                    radius="sm"
+                                    fullWidth
+                                    size="md"
+                                    variant="solid"
+                                    onPress={handleUploadFile}
+                                >
+                                    Upload
+                                </Button>
+                            </div>
+                        </ModalFooter>
+
                     </>
-                ) : (
-                    <div className="w-full h-screen flex flex-col items-center justify-center gap-8">
-                        <h1 className="text-2xl text-danger font-bold">You Need To Log in first</h1>
-                        <Button onPress={() => navigate("/resources/account/login")} color="danger" variant="shadow" size="lg" radius="sm">
-                            Log In
-                        </Button>
-                    </div>
-                )
-            }
-            <Toast open={showToast} onClose={() => setToast(false)}>
-                {toastMsg}
-            </Toast>
+                </ModalContent>
+            </Modal>
         </Fragment >
     );
 }

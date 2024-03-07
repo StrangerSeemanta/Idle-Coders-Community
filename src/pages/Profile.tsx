@@ -6,7 +6,8 @@ import Toast from "../components/Toast";
 import { FaDatabase } from "react-icons/fa6";
 import Beam from "../components/Beam";
 import Bg from "./../assets/bg-3.png"
-import BeamBasic from "./../assets/beams-basic.png"
+import BeamBasic from "./../assets/bg.png"
+import { FaUser } from "react-icons/fa";
 
 function Profile() {
     const [user, setUser] = useState<User>(); // Specify the type as User | null
@@ -148,13 +149,15 @@ function Profile() {
                             </div>
 
                             <div onClick={() => { return navigate('/user/storage') }} className="my-10 h-56 dark:bg-default-50 overflow-hidden max-w-full  rounded-medium shadow-medium shadow-black/10 ">
-                                <Beam imgSrc={BeamBasic} size="cover" >
+                                <Beam imgSrc={BeamBasic} size="contain" anchor="top" >
 
                                     <Card className=" bg-transparent h-56">
 
-                                        <CardBody className="px-3 hover:backdrop-blur-sm group first-line: cursor-pointer transition-all w-full flex justify-center items-center  py-0 text-small text-warning">
-                                            <FaDatabase className="mb-4 group-hover:text-default-400" size={50} />
-                                            <h1 className="group-hover:text-default-500 text-4xl font-bold text-foreground">
+                                        <CardBody className="px-3 hover:backdrop-blur-sm group first-line: cursor-pointer transition-all w-full flex justify-center items-center  py-0 text-small text-danger">
+                                            <div className="flex justify-center items-center w-20 h-20 rounded-full bg-danger text-white">
+                                                <FaUser className="" size={40} />
+                                            </div>
+                                            <h1 className="group-hover:text-default-500 text-4xl font-bold text-danger">
                                                 About You
                                             </h1>
                                         </CardBody>

@@ -13,6 +13,7 @@ export const getFileType = async (filePath: string): Promise<string> => {
     return "";
   }
 };
+
 export const downloadFile = (url: string) => {
   const anchor = document.createElement("a");
   anchor.href = url;

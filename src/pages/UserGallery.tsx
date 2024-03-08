@@ -18,17 +18,15 @@ import { FaFileAudio, FaFileDownload, FaFilePdf, FaPlay, FaVideo } from "react-i
 import AudioPlayer from 'react-h5-audio-player';
 import '../react-h5-audio-player.css';
 interface Photo {
-    title: string;
     src: string;
     filename: string;
     ftype: string;
     onDelete?: () => void;
 }
-const videoFileType = ["video/mp4", "video/webm", "video/avi"];
 // Import necessary components and functions
 
 // Define the PhotoCard component
-const PhotoCard = memo(({ title, src, filename, ftype, onDelete }: Photo) => {
+const PhotoCard = memo(({ src, filename, ftype, onDelete }: Photo) => {
     const { isOpen, onOpenChange, onOpen } = useDisclosure()
     // Define the Preview component
     const Preview = () => {
@@ -45,7 +43,7 @@ const PhotoCard = memo(({ title, src, filename, ftype, onDelete }: Photo) => {
                     </PhotoView>
                 </PhotoProvider>
             );
-        } else if (videoFileType.includes(ftype)) { // Corrected variable name
+        } else if (ftype.includes("video/")) { // Corrected variable name
             return <>
                 <div onClick={onOpen} className="w-full h-[30vh] flex cursor-pointer  justify-center items-center">
                     <FaVideo size={50} className="text-success group-hover:hidden" />
@@ -170,9 +168,8 @@ const PhotoCard = memo(({ title, src, filename, ftype, onDelete }: Photo) => {
         <>
             <div className="group hover:bg-foreground-100 dark:hover:bg-default-50 transition-colors animate-appearance-in p-4 flex flex-col justify-center items-center gap-5 shadow-lg shadow-black/10 h-[50vh] rounded-medium border-default border-1">
                 <div className="w-full flex justify-between">
-                    <div>
-                        <h1 className="text-xl w-full">{title}</h1>
-                        <h1 className="text-tiny w-full">{filename}</h1>
+                    <div className="overflow-hidden">
+                        <h1 className="text-sm w-full">{filename}</h1>
                     </div>
                     <Button onPress={onDelete} variant="light" className="invisible group-hover:visible" color="danger" isIconOnly size="sm" radius="full" >
                         <IoMdRemoveCircle className="text-danger" size={20} />
@@ -224,7 +221,7 @@ function UserGallery() {
                     const url = await getDownloadURL(itemRef);
                     const metadata = await getMetadata(itemRef);
                     const ftype = await getFileType(itemRef.fullPath);
-                    const splittedType = metadata.name.split('.')[metadata.name.split('.').length - 1];
+                    const splittedType = ftype.split('/')[0];
                     setFilterKeys((prev) => !prev.includes(splittedType) ? [...prev, splittedType] : [...prev])
                     return { id: index, title: `Item ${index + 1}`, src: url, filename: metadata.name, ftype: ftype };
                 });
@@ -331,7 +328,7 @@ function UserGallery() {
     const filterPhotos = (photos: Photo[]): Photo[] => {
         const filteredPhotos = photos.filter((photo) => {
             // Filter by selected chips
-            const type = photo.ftype.split("/").length > 0 ? photo.filename.split('.')[photo.filename.split('.').length - 1] : photo.ftype;
+            const type = photo.ftype.split("/").length > 0 ? photo.ftype.split('/')[0] : photo.ftype;
             if (selectedChips !== "all" && !selectedChips.includes(type)) {
                 return false;
             }
@@ -374,11 +371,11 @@ function UserGallery() {
                     ))}
                 </div>
                 <div className="flex flex-col sm:flex-row sm:justify-center
-                            sm:items-center pb-3 gap-2">
-                    <Input isClearable value={searchQuery} startContent={<IoSearch size={20} className="inline-block mr-2" />
+                            sm:items-center pb-3 w-full sm:w-auto gap-2">
+                    <Input isClearable fullWidth value={searchQuery} startContent={<IoSearch size={20} className="inline-block mr-2" />
                     } type="text" radius="sm"
                         placeholder="Search By File Name..."
-                        onValueChange={setSearchQuery} variant="bordered" className="w-60  " size="sm" />
+                        onValueChange={setSearchQuery} variant="bordered" className="sm:w-60  " size="sm" />
                     <div onClick={onOpen} className="uppercase text-center text-medium border-2 border-foreground  bg-foreground text-background cursor-pointer hover:opacity-80 transition-opacity font-bold py-2 px-5 rounded">Upload</div>
                 </div>
 
@@ -390,7 +387,9 @@ function UserGallery() {
                     </div>
                 ) : currentUser ? (
                     <>
-
+                        <div className="my-3 px-4">
+                            <h1 className="text-lg font-bold">Total File : {filterPhotos(photos).length}</h1>
+                        </div>
                         {/* Photos Grid */}
                         <div className="grid min-h-screen  items-start justify-between grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-5 px-4">
                             {filterPhotos(photos).map((photo, index) => (
@@ -398,7 +397,6 @@ function UserGallery() {
                                     key={index}
                                     ftype={photo.ftype}
                                     filename={photo.filename}
-                                    title={photo.title}
                                     src={photo.src}
                                     onDelete={() => handleDelete(photo.filename)}
                                 />

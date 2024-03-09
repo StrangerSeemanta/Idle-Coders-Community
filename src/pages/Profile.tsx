@@ -10,7 +10,7 @@ import { FaCamera } from "react-icons/fa6";
 import { FaFacebook, FaInstagramSquare } from "react-icons/fa";
 import GoogleIcon from "../Icons/GoogleIcon";
 import { IoAddCircle, IoImage } from "react-icons/io5";
-import { getDownloadURL, getStorage, listAll, ref, uploadBytesResumable } from "firebase/storage";
+import { deleteObject, getDownloadURL, getMetadata, getStorage, listAll, ref, uploadBytesResumable } from "firebase/storage";
 import { FirebaseApp } from "./Account";
 
 function Profile() {
@@ -18,13 +18,14 @@ function Profile() {
     const [isLoading, setIsLoading] = useState(true);
     const [showToast, setToast] = useState(false);
     const [toastMsg, setToastMsg] = useState("");
-    const { onOpen, isOpen, onOpenChange } = useDisclosure()
+    const { onOpen, isOpen, onOpenChange, onClose } = useDisclosure()
     const navigate = useNavigate()
     const [isUploading, setIsUploading] = useState(false);
     const [uploadingValue, setUploadingValue] = useState(0);
     const profileImageRef = useRef<HTMLInputElement>(null);
     const [selectedFileName, setSelectedFileName] = useState<string>("");
-    const [profilePic, setProfilePic] = useState<string | null>(null)
+    const [photoData, setPhotoData] = useState<{ src: string, fileName: string }[] | null>(null)
+
     const [isFetching, setIsFetching] = useState(false);
     useEffect(() => {
 
@@ -65,6 +66,25 @@ function Profile() {
             setSelectedFileName("");
         }
     };
+    async function handleDeletePrevProfilePic() {
+        try {
+            if (user && photoData) {
+                const storage = getStorage(FirebaseApp);
+                for (const photo of photoData) {
+                    const url = `profileImages/${user.uid}/${photo.fileName}`;
+                    const storageRef = ref(storage, url);
+                    await deleteObject(storageRef);
+                }
+            } else {
+                throw new Error("User or photo data not found");
+            }
+        } catch (error) {
+            console.error("Error deleting previous profile picture:", error);
+            throw new Error("Operation Failed");
+        }
+    }
+
+
     const fetchPhotos = useCallback(async () => {
         setIsFetching(true)
         if (user) {
@@ -74,11 +94,12 @@ function Profile() {
                 const res = await listAll(storageRef);
                 const urlsPromises = res.items.map(async (itemRef) => {
                     const url = await getDownloadURL(itemRef);
-
-                    return { src: url };
+                    const meta = await getMetadata(itemRef);
+                    return { src: url, fileName: meta.name };
                 });
                 const photoData = await Promise.all(urlsPromises);
-                setProfilePic(photoData[photoData.length - 1].src);
+
+                setPhotoData(photoData);
                 setIsFetching(false)
             } catch (error) {
                 console.error("Error fetching photos:", error);
@@ -101,6 +122,7 @@ function Profile() {
             const url = `profileImages/${user.uid}/${file.name}`;
             const storeRef = ref(storage, url);
 
+            await handleDeletePrevProfilePic()
             // Upload the file
             const uploadTask = uploadBytesResumable(storeRef, file);
 
@@ -124,7 +146,7 @@ function Profile() {
                     setToast(true);
                     setToastMsg("Successfully Uploaded");
                     setSelectedFileName("");
-
+                    onClose()
                     // Fetch updated photos
                     await fetchPhotos()
                 }
@@ -171,7 +193,7 @@ function Profile() {
                                 <div className="px-4 pb-6 text-center lg:pb-8 xl:pb-11.5">
                                     <div className="relative z-30 mx-auto -mt-24 h-[7.5rem] flex justify-center items-center  w-full max-w-[7.5rem] rounded-full bg-white/20 p-1 backdrop-blur-sm sm:h-[11rem] sm:max-w-[11rem] sm:p-3">
                                         <div className="drop-shadow-md w-24 h-24 sm:h-36 sm:w-36 rounded-full overflow-hidden ">
-                                            <Image isLoading={isFetching} src={profilePic ? profilePic : UserSix} alt="profile" />
+                                            <Image isLoading={isFetching} src={photoData ? photoData[0].src : UserSix} alt="profile" />
 
                                         </div>
                                         <div

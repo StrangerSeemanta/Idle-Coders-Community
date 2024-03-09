@@ -215,7 +215,7 @@ function UserGallery() {
             setLoading(true)
             try {
                 const storage = getStorage(FirebaseApp);
-                const storageRef = ref(storage, `img/${currentUser.uid}`);
+                const storageRef = ref(storage, `storage/${currentUser.uid}`);
                 const res = await listAll(storageRef);
                 const urlsPromises = res.items.map(async (itemRef, index) => {
                     const url = await getDownloadURL(itemRef);
@@ -255,7 +255,7 @@ function UserGallery() {
             setIsUploading(true);
             const storage = getStorage(FirebaseApp);
             const file = imageRef.current.files[0];
-            const url = `img/${currentUser.uid}/${file.name}`;
+            const url = `storage/${currentUser.uid}/${file.name}`;
             const storeRef = ref(storage, url);
 
             // Upload the file
@@ -298,7 +298,7 @@ function UserGallery() {
             setLoading(true)
             try {
                 const storage = getStorage(FirebaseApp)
-                const url = `img/${currentUser.uid}/${filePath}`
+                const url = `storage/${currentUser.uid}/${filePath}`
                 const storageRef = ref(storage, url); // Replace 'storage' with your Firebase Storage instance
                 await deleteObject(storageRef);
             } catch (e) {

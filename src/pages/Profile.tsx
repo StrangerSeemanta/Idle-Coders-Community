@@ -117,35 +117,43 @@ function Profile() {
             const url = `profileImages/${user.uid}/${file.name}`;
             const storeRef = ref(storage, url);
 
-            await handleDeletePrevProfilePic()
-            // Upload the file
-            const uploadTask = uploadBytesResumable(storeRef, file);
+            if (file.type.includes("image/")) {
+                await handleDeletePrevProfilePic()
+                // Upload the file
+                const uploadTask = uploadBytesResumable(storeRef, file);
 
-            // Listen for state changes and progress
-            uploadTask.on("state_changed",
-                (snapshot) => {
-                    // Get upload progress
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    setUploadingValue(progress);
-                },
-                (error) => {
-                    // Handle unsuccessful uploads
-                    console.error("Error uploading file: ", error);
-                    setIsUploading(false);
-                    setToast(true);
-                    setToastMsg("Upload Failed, Try Again");
-                },
-                async () => {
-                    // Handle successful uploads
-                    setIsUploading(false);
-                    setToast(true);
-                    setToastMsg("Successfully Uploaded");
-                    setSelectedFileName("");
-                    onClose()
-                    // Fetch updated photos
-                    await fetchPhotos()
-                }
-            );
+                // Listen for state changes and progress
+                uploadTask.on("state_changed",
+                    (snapshot) => {
+                        // Get upload progress
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        setUploadingValue(progress);
+                    },
+                    (error) => {
+                        // Handle unsuccessful uploads
+                        console.error("Error uploading file: ", error);
+                        setIsUploading(false);
+                        setToast(true);
+                        setToastMsg("Upload Failed, Try Again");
+                    },
+                    async () => {
+                        // Handle successful uploads
+                        setIsUploading(false);
+                        setToast(true);
+                        setToastMsg("Successfully Uploaded");
+                        setSelectedFileName("");
+                        onClose()
+                        // Fetch updated photos
+                        await fetchPhotos()
+                    }
+                );
+            } else {
+                setToast(true);
+                setToastMsg("You Can Only Upload Image Files");
+                setIsUploading(false);
+                onClose()
+                setSelectedFileName('')
+            }
         } else {
             setToast(true);
             setToastMsg("No file selected");
@@ -316,7 +324,10 @@ function Profile() {
                                             )}
                                         </label>
                                     </CardBody>
-                                    <CardFooter>
+                                    <CardFooter className="flex-col">
+                                        <span className="text-medium font-mono font-semibold text-danger">
+                                            Select Only Image File
+                                        </span>
                                         <span className="text-tiny font-mono font-semibold italic">
                                             If you close this popup or reload this page, your upload will be cancelled
                                         </span>

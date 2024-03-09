@@ -36,38 +36,15 @@ export const getProfilePicture = async () => {
       const storage = getStorage(FirebaseApp);
       const storageRef = ref(storage, `profileImages/${user.uid}`);
       const res = await listAll(storageRef);
-
-      // Fetch metadata for each image and store them with the URL
-      const metadataPromises = res.items.map(async (itemRef) => {
-        const metadata = await getMetadata(itemRef);
+      const urlsPromises = res.items.map(async (itemRef) => {
         const url = await getDownloadURL(itemRef);
-        return { metadata, url };
+        const meta = await getMetadata(itemRef);
+        return { photoSrc: url, photoName: meta.name };
       });
-
-      // Wait for all metadata promises to resolve
-      const metadataData = await Promise.all(metadataPromises);
-
-      // Sort images by creation time in descending order
-      const sortedImages = metadataData.sort((a, b) => {
-        // Convert 'timeCreated' to number
-        const timeA = Number(a.metadata.timeCreated);
-        const timeB = Number(b.metadata.timeCreated);
-
-        // Ensure 'timeCreated' is valid before subtraction
-        if (!isNaN(timeA) && !isNaN(timeB)) {
-          return timeB - timeA;
-        }
-
-        // If conversion fails or one of the times is not valid, return 0
-        return 0;
-      });
-
-      // Get the URL of the latest image
-      const latestImage = sortedImages[0];
-      return latestImage;
-      // Set the latest image URL as the profile picture
+      const photoData = await Promise.all(urlsPromises);
+      return photoData;
     } catch (error) {
-      console.error("Error fetching photos:", error);
+      throw new Error("Failed To Fetch Profile Picture");
     }
   }
 };

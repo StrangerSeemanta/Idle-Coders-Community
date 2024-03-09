@@ -6,6 +6,8 @@ import detectTheme from "../modules/DetectSystemTheme";
 import Brush from "../Icons/Brush";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import { ProfileData } from "../pages/Profile";
+import { getProfilePicture } from "../modules/getUserDetails";
 
 const getTheme = () => {
   const theme = localStorage.getItem('theme');
@@ -23,6 +25,7 @@ const getTheme = () => {
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [user, setUser] = useState<User>();
+  const [photoData, setPhotoData] = useState<ProfileData[]>()
   const navigate = useNavigate();
   const Links = useMemo(function () {
     return {
@@ -76,6 +79,12 @@ export default function Nav() {
       if (user) {
         // User is signed in
         setUser(user);
+        getProfilePicture().then((response) => {
+          setPhotoData(response)
+        }).catch(() => {
+          console.error("Failed To Fetch ProfilePhotos ")
+          throw new Error("Failed To Fetch ProfilePhotos ")
+        })
       } else {
         // No user is signed in
         setUser(undefined);
@@ -164,7 +173,7 @@ export default function Nav() {
 
         <NavbarContent justify="end">
           <NavbarItem>
-            <Avatar className="hover:opacity-80 transition-opacity cursor-pointer" onClick={() => { navigate("/user/profile") }} isBordered color="success" size="sm" fallback={user && user.displayName} src={user && user.photoURL || undefined} />
+            <Avatar className="hover:opacity-80 transition-opacity cursor-pointer" onClick={() => { navigate("/user/profile") }} isBordered color="success" size="sm" src={user && photoData && photoData[0].photoSrc || undefined} />
           </NavbarItem>
           <NavbarItem >
             <Dropdown>

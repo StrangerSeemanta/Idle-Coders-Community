@@ -10,6 +10,8 @@ import { User, getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { FirebaseApp } from "./Account";
 import { RiDatabase2Line } from "react-icons/ri";
 import Toast from "../components/Toast";
+import { getProfilePicture } from "../modules/getUserDetails";
+import { ProfileData } from "./Profile";
 interface SidebarProps {
     children: ReactNode;
     className?: string | string[];
@@ -21,12 +23,20 @@ function UserSidebar({ className, children }: SidebarProps) {
     const [showToast, setToast] = useState(false);
     const [toastMsg, setToastMsg] = useState("");
     const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [photoData, setPhotoData] = useState<ProfileData[]>()
+
     useEffect(() => {
         setLoading(true)
         const auth = getAuth(FirebaseApp);
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setCurrentUser(user);
-            setLoading(false)
+            setLoading(false);
+            getProfilePicture().then((response) => {
+                setPhotoData(response)
+            }).catch(() => {
+                console.error("Failed To Fetch ProfilePhotos ")
+                throw new Error("Failed To Fetch ProfilePhotos ")
+            })
         });
 
         return () => unsubscribe();
@@ -79,7 +89,7 @@ function UserSidebar({ className, children }: SidebarProps) {
                     <div className="h-screen w-full flex justify-center items-center" >
                         <Spinner size="lg" color="success" label="Loading..." />
                     </div>
-                    : currentUser && currentUser.photoURL ? <>
+                    : currentUser ? <>
                         < div className='w-full  h-[89vh] flex flex-col sm:flex-row bg-default-50/60 ' >
                             {/* lg: Expanded Side Bar */}
                             < div className='bg-background  h-full w-64 hidden lg:block' >
@@ -96,7 +106,7 @@ function UserSidebar({ className, children }: SidebarProps) {
                                             }}
                                             avatarProps={{
                                                 size: "md",
-                                                src: currentUser.photoURL
+                                                src: photoData && photoData[0].photoSrc
                                             }}
                                         />
                                     </div>
@@ -131,7 +141,7 @@ function UserSidebar({ className, children }: SidebarProps) {
 
                                     <div className='no-underline w-full h-full flex items-center justify-end' >
                                         <div className={twMerge("w-10/12 flex justify-center items-center flex-col gap-y-1 group hover:text-foreground text-foreground-400 transition  h-fit py-3 rounded-none bg-transparent", "text-danger hover:text-danger-300 font-bold")}>
-                                            <Avatar size="sm" src={currentUser.photoURL} color="success" isBordered />
+                                            <Avatar size="sm" src={photoData && photoData[0].photoSrc} color="success" isBordered />
                                         </div>
                                     </div>
 

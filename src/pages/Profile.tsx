@@ -10,9 +10,14 @@ import { FaCamera } from "react-icons/fa6";
 import { FaFacebook, FaInstagramSquare } from "react-icons/fa";
 import GoogleIcon from "../Icons/GoogleIcon";
 import { IoAddCircle, IoImage } from "react-icons/io5";
-import { deleteObject, getDownloadURL, getMetadata, getStorage, listAll, ref, uploadBytesResumable } from "firebase/storage";
+import { deleteObject, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { FirebaseApp } from "./Account";
+import { getProfilePicture } from "../modules/getUserDetails";
 
+export interface ProfileData {
+    photoSrc: string;
+    photoName: string;
+}
 function Profile() {
     const [user, setUser] = useState<User | null>(null); // Specify the type as User | null
     const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +29,7 @@ function Profile() {
     const [uploadingValue, setUploadingValue] = useState(0);
     const profileImageRef = useRef<HTMLInputElement>(null);
     const [selectedFileName, setSelectedFileName] = useState<string>("");
-    const [photoData, setPhotoData] = useState<{ src: string, fileName: string }[] | null>(null)
+    const [photoData, setPhotoData] = useState<ProfileData[] | null>(null)
 
     const [isFetching, setIsFetching] = useState(false);
     useEffect(() => {
@@ -71,7 +76,7 @@ function Profile() {
             if (user && photoData) {
                 const storage = getStorage(FirebaseApp);
                 for (const photo of photoData) {
-                    const url = `profileImages/${user.uid}/${photo.fileName}`;
+                    const url = `profileImages/${user.uid}/${photo.photoName}`;
                     const storageRef = ref(storage, url);
                     await deleteObject(storageRef);
                 }
@@ -88,23 +93,13 @@ function Profile() {
     const fetchPhotos = useCallback(async () => {
         setIsFetching(true)
         if (user) {
-            try {
-                const storage = getStorage(FirebaseApp);
-                const storageRef = ref(storage, `profileImages/${user.uid}`);
-                const res = await listAll(storageRef);
-                const urlsPromises = res.items.map(async (itemRef) => {
-                    const url = await getDownloadURL(itemRef);
-                    const meta = await getMetadata(itemRef);
-                    return { src: url, fileName: meta.name };
-                });
-                const photoData = await Promise.all(urlsPromises);
 
-                setPhotoData(photoData);
-                setIsFetching(false)
-            } catch (error) {
-                console.error("Error fetching photos:", error);
+            const response = await getProfilePicture()
+            if (response) {
+                setPhotoData(response)
                 setIsFetching(false)
             }
+
         }
     }, [user])
 
@@ -193,7 +188,7 @@ function Profile() {
                                 <div className="px-4 pb-6 text-center lg:pb-8 xl:pb-11.5">
                                     <div className="relative z-30 mx-auto -mt-24 h-[7.5rem] flex justify-center items-center  w-full max-w-[7.5rem] rounded-full bg-white/20 p-1 backdrop-blur-sm sm:h-[11rem] sm:max-w-[11rem] sm:p-3">
                                         <div className="drop-shadow-md w-24 h-24 sm:h-36 sm:w-36 rounded-full overflow-hidden ">
-                                            <Image isLoading={isFetching} src={photoData ? photoData[0].src : UserSix} alt="profile" />
+                                            <Image isLoading={isFetching} src={photoData ? photoData[0].photoSrc : UserSix} alt="profile" />
 
                                         </div>
                                         <div

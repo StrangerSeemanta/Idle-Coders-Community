@@ -357,6 +357,9 @@ function UserGallery() {
         <Fragment>
             {/* Filter UI */}
             {/* Filter UI */}
+            <div className="my-4 px-4">
+                <h1 className="text-3xl font-bold "><span className="">Storage</span> <span className="text-default-500">- Store Whatever You Want</span></h1>
+            </div>
             <div className="bg-default-50 backdrop-saturate-150 backdrop-blur-lg z-50 flex flex-col-reverse  lg:flex-row items-start lg:items-center  lg:justify-between mb-4 p-3 w-full">
                 <div className="relative flex items-center gap-3 overflow-x-auto w-full lg:w-2/3 cscroll pb-3 mr-4">
                     {filterKeys.map((name, index) => (

@@ -1,14 +1,18 @@
-import { Fragment, useState, useEffect, } from "react";
-import { Button, Image, Spinner } from "@nextui-org/react";
+import { Fragment, useState, useEffect, useRef, useCallback } from "react";
+import { Button, Card, CardBody, CardFooter, CircularProgress, Image, Modal, ModalBody, ModalContent, ModalFooter, Progress, Spinner, useDisclosure } from "@nextui-org/react";
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import { Link, useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
 import Cover from '../assets/cover-01.png';
-import userSix from "../assets/user-06.png"
+
 import { FaCamera } from "react-icons/fa6";
 import { FaFacebook, FaInstagramSquare } from "react-icons/fa";
 import GoogleIcon from "../Icons/GoogleIcon";
-
+import { IoAddCircle, IoCloseCircleOutline, IoImage } from "react-icons/io5";
+import { deleteObject, getDownloadURL, getStorage, listAll, ref, uploadBytesResumable } from "firebase/storage";
+import { FirebaseApp } from "./Account";
+import { SlSettings } from "react-icons/sl";
+import { PhotoProvider, PhotoView } from "react-photo-view";
 
 export interface ProfileData {
     photoSrc: string | null;
@@ -19,9 +23,26 @@ function Profile() {
     const [isLoading, setIsLoading] = useState(true);
     const [showToast, setToast] = useState(false);
     const [toastMsg, setToastMsg] = useState("");
+    const { onOpen, isOpen, onOpenChange, onClose } = useDisclosure()
     const navigate = useNavigate()
+    const [isProfilePicUploading, setIsProfilePicUploading] = useState(false);
+    const [isCoverPicUploading, setIsCoverPicUploading] = useState(false);
 
+    const [ProfilePicUploadingValue, setProfilePicUploadingValue] = useState(0);
+    const [CoverPicUploadingValue, setCoverPicUploadingValue] = useState(0);
 
+    const profileImageRef = useRef<HTMLInputElement>(null);
+    const coverImageRef = useRef<HTMLInputElement>(null);
+
+    const [selectedFileNamePP, setSelectedFileNamePP] = useState<string>("");
+    const [selectedFileNameCP, setSelectedFileNameCP] = useState<string>("");
+
+    const [profileImage, setProfileImage] = useState("")
+    const [coverImage, setCoverImage] = useState<string>(Cover);
+    const [isCoverImagePopup, setCoverImagePopup] = useState<boolean>(false);
+
+    const coverImages = [Cover, Cover, Cover];
+    const [isFetching, setIsFetching] = useState(false);
     useEffect(() => {
 
         const auth = getAuth();
@@ -54,10 +75,223 @@ function Profile() {
     //     }
     // };
     // Handle file input change
+    const handleProfilePicInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files.length > 0) {
+            setSelectedFileNamePP(event.target.files[0].name);
+        } else {
+            setSelectedFileNamePP("");
+        }
+    };
+    async function handleDeletePrevProfilePic() {
+        try {
+            if (user && profileImage) {
+                const storage = getStorage(FirebaseApp);
+                const url = `profileImage/${user.uid}`;
+                const storageRef = ref(storage, url);
+                const res = await listAll(storageRef);
+                if (res.items.length > 0) {
+                    res.items.map(async (itemRef) => {
+                        await deleteObject(itemRef);
+                    })
+                }
+
+            } else {
+                throw new Error("User or photo data not found");
+            }
+        } catch (error) {
+            console.error("Error deleting previous profile picture:", error);
+            throw new Error("Operation Failed");
+        }
+    }
 
 
+    const fetchProfilePhotos = useCallback(async () => {
+        setIsFetching(true)
+
+        if (user) {
+            try {
+                const storage = getStorage(FirebaseApp);
+                const storageRef = ref(storage, `profileImage/${user.uid}`);
+                const res = await listAll(storageRef);
+                const urlsPromises = res.items.map(async (itemRef) => {
+                    const url = await getDownloadURL(itemRef);
+                    return url;
+                });
+                const photoData = await Promise.all(urlsPromises);
+                setIsFetching(false)
+                photoData[0] ? setProfileImage(photoData[0]) : (user.photoURL ? setProfileImage(user.photoURL) : setProfileImage(''));
+            } catch (error) {
+                throw new Error("Failed To Fetch Profile Picture");
+            }
+        }
 
 
+    }, [user])
+
+    useEffect(() => {
+
+        fetchProfilePhotos();
+
+    }, [user, fetchProfilePhotos]);
+    // Handle file upload
+    const handleUploadFile = async () => {
+        if (user && profileImageRef.current?.files && profileImageRef.current.files.length > 0 && selectedFileNamePP.length > 0) {
+            setIsProfilePicUploading(true);
+            const storage = getStorage(FirebaseApp);
+            const file = profileImageRef.current.files[0];
+            const url = `profileImage/${user.uid}/${file.name}`;
+            const storeRef = ref(storage, url);
+
+            if (file.type.includes("image/")) {
+                await handleDeletePrevProfilePic()
+                // Upload the file
+                const uploadTask = uploadBytesResumable(storeRef, file);
+
+                // Listen for state changes and progress
+                uploadTask.on("state_changed",
+                    (snapshot) => {
+                        // Get upload progress
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        setProfilePicUploadingValue(progress);
+                    },
+                    (error) => {
+                        // Handle unsuccessful uploads
+                        console.error("Error uploading file: ", error);
+                        setIsProfilePicUploading(false);
+                        setToast(true);
+                        setToastMsg("Upload Failed, Try Again");
+                    },
+                    async () => {
+                        // Handle successful uploads
+                        setIsProfilePicUploading(false);
+                        setToast(true);
+                        setToastMsg("Successfully Uploaded");
+                        setSelectedFileNamePP("");
+                        onClose()
+                        // Fetch updated photos
+                        await fetchProfilePhotos()
+                    }
+                );
+            } else {
+                setToast(true);
+                setToastMsg("You Can Only Upload Image Files");
+                setIsProfilePicUploading(false);
+                onClose()
+                setSelectedFileNamePP('')
+            }
+        } else {
+            setToast(true);
+            setToastMsg("No file selected");
+        }
+    };
+
+    // Handle Cover Images
+    const handleCoverPicInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files.length > 0) {
+            setSelectedFileNameCP(event.target.files[0].name);
+        } else {
+            setSelectedFileNameCP("");
+        }
+    };
+    const fetchCoverPhotos = useCallback(async () => {
+        setIsFetching(true)
+
+        if (user) {
+            try {
+                const storage = getStorage(FirebaseApp);
+                const storageRef = ref(storage, `coverImage/${user.uid}`);
+                const res = await listAll(storageRef);
+                const urlsPromises = res.items.map(async (itemRef) => {
+                    const url = await getDownloadURL(itemRef);
+                    return url;
+                });
+                const photoData = await Promise.all(urlsPromises);
+                setIsFetching(false)
+                photoData[0] ? setCoverImage(photoData[0]) : setCoverImage(Cover);
+            } catch (error) {
+                throw new Error("Failed To Fetch Profile Picture");
+            }
+        }
+
+
+    }, [user])
+
+    useEffect(() => {
+
+        fetchCoverPhotos();
+
+    }, [user, fetchCoverPhotos]);
+    async function handleDeletePrevCoverPic() {
+        try {
+            if (user && profileImage) {
+                const storage = getStorage(FirebaseApp);
+                const url = `coverImage/${user.uid}`;
+                const storageRef = ref(storage, url);
+                const res = await listAll(storageRef);
+                if (res.items.length > 0) {
+                    res.items.map(async (itemRef) => {
+                        await deleteObject(itemRef);
+                    })
+                }
+
+            } else {
+                throw new Error("User or photo data not found");
+            }
+        } catch (error) {
+            console.error("Error deleting previous profile picture:", error);
+            throw new Error("Operation Failed");
+        }
+    }
+    const handleCoverImageUpload = async () => {
+        if (user && coverImageRef.current?.files && coverImageRef.current.files.length > 0 && selectedFileNameCP.length > 0) {
+            setIsCoverPicUploading(true);
+            const storage = getStorage(FirebaseApp);
+            const file = coverImageRef.current.files[0];
+            const url = `coverImage/${user.uid}/${file.name}`;
+            const storeRef = ref(storage, url);
+
+            if (file.type.includes("image/")) {
+                await handleDeletePrevCoverPic()
+                // Upload the file
+                const uploadTask = uploadBytesResumable(storeRef, file);
+
+                // Listen for state changes and progress
+                uploadTask.on("state_changed",
+                    (snapshot) => {
+                        // Get upload progress
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        setCoverPicUploadingValue(progress);
+                    },
+                    (error) => {
+                        // Handle unsuccessful uploads
+                        console.error("Error uploading file: ", error);
+                        setIsCoverPicUploading(false);
+                        setToast(true);
+                        setToastMsg("Upload Failed, Try Again");
+                    },
+                    async () => {
+                        // Handle successful uploads
+                        setIsCoverPicUploading(false);
+                        setToast(true);
+                        setToastMsg("Successfully Uploaded");
+                        setSelectedFileNameCP("");
+                        setCoverImagePopup(false)
+                        // Fetch updated photos
+                        await fetchCoverPhotos()
+                    }
+                );
+            } else {
+                setToast(true);
+                setToastMsg("You Can Only Upload Image Files");
+                setIsCoverPicUploading(false);
+                setCoverImagePopup(false)
+                setSelectedFileNameCP('')
+            }
+        } else {
+            setToast(true);
+            setToastMsg("No file selected");
+        }
+    };
     return (
         <Fragment>
             {
@@ -79,26 +313,35 @@ function Profile() {
                         </div> :
                         <div className="w-full min-h-screen py-4 px-5 ">
                             <h1 className="text-2xl font-bold ">Profile</h1>
-                            <div className="border border-default bg-default-100 rounded-small overflow-hidden shadow-lg shadow-black/20 mt-10 pb-14">
+                            <div className="border border-default bg-default-100 dark:bg-default-50 rounded-small overflow-hidden shadow-lg shadow-black/20 mt-10 pb-14">
 
                                 {/* Cover Pic */}
-                                <div className="relative overflow-hidden z-20   ">
-                                    <Image src={Cover} radius="none" />
-                                    <label htmlFor="change-cover" className="absolute bottom-5 right-5 z-50 bg-primary text-white sm:py-2 sm:px-3 p-2 text-tiny sm:text-sm flex justify-center items-center gap-x-2 shadow-xl cursor-pointer hover:brightness-125 transition-all">
-                                        <FaCamera size={20} />
-                                        <span>Edit</span>
-                                        <input id="change-cover" type="file" className="hidden" />
-                                    </label>
+                                <div className="relative overflow-hidden max-h-72 z-20   ">
+                                    <PhotoProvider>
+                                        <PhotoView src={coverImage}>
+                                            <Image src={coverImage} radius="none" className="cursor-pointer transition-all hover:brightness-90" />
+                                        </PhotoView>
+                                    </PhotoProvider>
+                                    <div onClick={() => setCoverImagePopup(true)} className="absolute bottom-5 right-5 z-50 bg-primary text-white sm:py-2 sm:px-3 p-2 text-tiny sm:text-sm flex justify-center items-center gap-x-2 shadow-xl cursor-pointer hover:brightness-125 transition-all">
+                                        <SlSettings size={20} />
+                                        <span>Change</span>
+                                    </div>
+
                                 </div>
 
                                 {/* User Pic */}
                                 <div className="px-4 pb-6 text-center lg:pb-8 xl:pb-11.5">
                                     <div className="relative z-30 mx-auto -mt-24 h-[7.5rem] flex justify-center items-center  w-full max-w-[7.5rem] rounded-full bg-white/20 p-1 backdrop-blur-sm sm:h-[11rem] sm:max-w-[11rem] sm:p-3">
-                                        <div className="drop-shadow-md w-24 h-24 sm:h-36 sm:w-36 rounded-full overflow-hidden ">
-                                            <Image src={userSix} alt="profile" />
+                                        <div className="drop-shadow-md w-24 h-24 sm:h-36 sm:w-36 rounded-full overflow-hidden object-cover flex justify-center items-center">
+                                            <PhotoProvider>
+                                                <PhotoView src={profileImage}>
+                                                    <Image isLoading={isFetching} src={profileImage} radius="full" className="w-full h-full hover:brightness-90  cursor-pointer" alt="profile" />
+                                                </PhotoView>
+                                            </PhotoProvider>
 
                                         </div>
                                         <div
+                                            onClick={onOpen}
                                             className="absolute bottom-0 right-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white hover:bg-opacity-90 sm:bottom-4 sm:right-2"
                                         >
                                             <FaCamera size={15} />
@@ -185,7 +428,125 @@ function Profile() {
             <Toast open={showToast} onClose={() => setToast(false)}>
                 {toastMsg}
             </Toast>
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl" className="p-4">
+                <ModalContent>
 
+                    <>
+
+                        <ModalBody className="h-full flex justify-center items-center">
+                            <div className="w-full hover:bg-foreground-100 dark:hover:bg-default-50 transition-colors group animate-appearance-in  p-4 flex flex-col justify-center items-center gap-5 shadow-lg shadow-black/10 h-[50vh] rounded-medium border-1 border-default">
+                                <Card className="w-full bg-background group-hover:bg-foreground-100 dark:group-hover:bg-default-50 border-none shadow-none h-full">
+                                    <CardBody className="px-3 py-0 text-small text-default-400">
+                                        <input ref={profileImageRef} className="hidden" type="file" id="upload-pic" onChange={handleProfilePicInputChange} />
+                                        <label htmlFor="upload-pic" className="group cursor-pointer hover:opacity-80 transition-opacity w-full h-full flex justify-center items-center">
+                                            {isProfilePicUploading ? (
+                                                <CircularProgress
+                                                    classNames={{
+                                                        svg: "w-36 h-36 drop-shadow-md",
+                                                        indicator: "stroke-success",
+                                                        track: "stroke-default/40",
+                                                        value: "text-3xl font-semibold text-success",
+                                                    }}
+                                                    value={ProfilePicUploadingValue}
+                                                    strokeWidth={4}
+                                                    showValueLabel={true}
+                                                />
+                                            ) : selectedFileNamePP ? (
+                                                <>
+                                                    <div className="w-full">
+                                                        <div className="w-full flex items-center justify-center">
+                                                            <IoImage size={40} className="text-default-400 group-hover:text-success transition-colors" />
+                                                        </div>
+                                                        <span className="ml-2 text-sm break-words group-hover:text-success transition-colors text-default-400">{selectedFileNamePP}</span>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <IoAddCircle size={60} className="group-hover:text-success" />
+                                            )}
+                                        </label>
+                                    </CardBody>
+                                    <CardFooter className="flex-col">
+                                        <span className="text-medium font-mono font-semibold text-danger">
+                                            Select Only Image File
+                                        </span>
+                                        <span className="text-tiny font-mono font-semibold italic">
+                                            If you close this popup or reload this page, your upload will be cancelled
+                                        </span>
+                                    </CardFooter>
+                                </Card>
+                            </div>
+                        </ModalBody>
+                        <ModalFooter className="flex justify-center">
+
+                            <div className="flex gap-2 w-full animate-appearance-in">
+                                <Button
+                                    color="success"
+                                    className="bg-foreground text-background"
+                                    radius="sm"
+                                    fullWidth
+                                    size="md"
+                                    variant="solid"
+                                    onPress={handleUploadFile}
+                                >
+                                    Upload
+                                </Button>
+                            </div>
+                        </ModalFooter>
+
+                    </>
+                </ModalContent>
+            </Modal>
+            {/* Change Cover Image Custom Modal */}
+            {isCoverImagePopup &&
+                <div className="bg-background/30 animate-appearance-in flex justify-center items-center backdrop-blur-md fixed top-0 left-0 w-full h-full z-50">
+                    <div className="p-5 bg-default-100 w-[90%] shadow-large relative">
+                        <Button onPress={() => setCoverImagePopup(false)} variant="light" className="absolute right-2 top-2" isIconOnly radius="full">
+                            <IoCloseCircleOutline size={27} />
+                        </Button>
+                        <h1 className="mb-3">Select A Background Image</h1>
+                        <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                            {
+                                coverImages.map((image, ind) => (
+                                    <div onClick={() => { setCoverImage(image); setCoverImagePopup(false) }} key={image + String(ind)} className="cursor-pointer p-1 transition-all drop-shadow-lg hover:drop-shadow-none"  >
+                                        <Image isZoomed radius="none" src={image} />
+                                    </div>
+                                ))
+                            }
+
+                            <Card className="w-full bg-transparent group-hover:bg-foreground-100 dark:group-hover:bg-default-50  shadow-medium h-full">
+                                <CardBody className="p-3 text-small text-default-400">
+                                    <input ref={coverImageRef} className="hidden" type="file" id="upload-pic" onChange={handleCoverPicInputChange} />
+                                    <label htmlFor="upload-pic" className="group cursor-pointer hover:opacity-80 transition-opacity w-full h-full flex justify-center items-center">
+                                        {isCoverPicUploading ? (
+                                            <Progress
+                                                aria-label="Downloading..."
+                                                size="md"
+                                                value={CoverPicUploadingValue}
+                                                color="success"
+                                                showValueLabel={true}
+                                                className="max-w-md"
+                                            />
+                                        ) : selectedFileNameCP ? (
+                                            <>
+                                                <div className="w-full">
+                                                    <div className="w-full flex items-center justify-center">
+                                                        <IoImage size={30} className="text-default-400 group-hover:text-success transition-colors" />
+                                                    </div>
+                                                    <span className="ml-2 text-sm break-words group-hover:text-success transition-colors text-default-400">{selectedFileNameCP}</span>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <IoAddCircle size={40} className="group-hover:text-success" />
+                                        )}
+                                    </label>
+                                    <Button onPress={handleCoverImageUpload} >Upload</Button>
+                                </CardBody>
+
+                            </Card>
+                        </div>
+                    </div>
+
+                </div>}
         </Fragment >
     )
 }

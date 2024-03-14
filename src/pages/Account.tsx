@@ -74,10 +74,10 @@ export function LoginPage() {
             });
     }
     return (
-        <div className="flex relative justify-center items-center gap-10 flex-col my-20  w-full lg:w-2/3 lg:border-1 p-14 rounded-3xl">
+        <div className="flex relative justify-center items-center gap-10 flex-col   w-full lg:w-2/3  p-14 rounded-3xl">
             <h1 className='text-3xl  font-bold'>Log In To Idlecoders</h1>
 
-            <form onSubmit={handleLogIn} className='w-full h-full flex flex-col gap-4'>
+            <form onSubmit={handleLogIn} className='hidden w-full h-full flex-col gap-4'>
                 <Input name='account_email' placeholder='Account Username Or Email' startContent={<IoIosMail className='text-default-400' size={26} />} variant='bordered' size='lg' radius='sm' value={loginEmail} onValueChange={setLoginEmail} isClearable
                     isRequired labelPlacement='outside' label="Email" type='Email' />
 
@@ -98,15 +98,15 @@ export function LoginPage() {
 
             </form>
 
-            <div className='flex justify-between gap-2 w-full'>
-                <div onClick={handleGoogleLogin} className='select-none transition-colors w-1/2 rounded-md active:bg-default-200 hover:bg-default-100 cursor-pointer text-tiny border-1 border-divider p-3 flex flex-col items-center justify-between '>
+            <div className='flex flex-col justify-between gap-5 w-full'>
+                <div onClick={handleGoogleLogin} className='select-none transition-colors w-full rounded-md active:bg-default-200 hover:bg-default-100 cursor-pointer text-tiny border-1 border-divider p-4 flex flex-col items-center justify-between shadow-medium'>
                     <GoogleIcon size={50} />
                     <span>
                         Continue With Google
                     </span>
                 </div>
                 <Divider orientation='vertical' />
-                <div onClick={githubSignIn} className='select-none w-1/2 transition-colors rounded-md  active:bg-default-200  hover:bg-default-100 cursor-pointer text-tiny border-1 border-divider p-3 flex flex-col items-center justify-end gap-3'>
+                <div onClick={githubSignIn} className='select-none w-full transition-colors rounded-md  active:bg-default-200  hover:bg-default-100 cursor-pointer text-tiny border-1 border-divider p-6 flex flex-col items-center justify-end gap-3 shadow-medium'>
                     <FaGithub size={25} className="text-foreground" />
                     <span>
                         Continue With Github
@@ -114,7 +114,7 @@ export function LoginPage() {
                 </div>
             </div>
 
-            <div className='mt-14 w-full'>
+            <div className='mt-14 w-full hidden'>
 
                 <h1 className='text-lg mb-4 '>Don't Have An Idlecoders Account?</h1>
                 <Button onPress={() => { navigate("/resources/account/signup") }} fullWidth size='lg' radius='sm' color='danger' className='bg-foreground text-background font-bold ' variant='solid'>Create New Account</Button>

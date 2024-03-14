@@ -53,11 +53,11 @@ function Router() {
                 {Routing.Account.Login.element}
               </HeadPolish>
             } />
-            <Route path={"/resources/account/signup"} element={
+            {/* <Route path={"/resources/account/signup"} element={
               <HeadPolish title={Routing.Account.Signup.title} >
                 {Routing.Account.Signup.element}
               </HeadPolish>
-            } />
+            } /> */}
 
           </Route>
 

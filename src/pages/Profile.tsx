@@ -11,8 +11,9 @@ import GoogleIcon from "../Icons/GoogleIcon";
 import { IoAddCircle, IoCloseCircleOutline, IoImage } from "react-icons/io5";
 import { deleteObject, getDownloadURL, getStorage, listAll, ref, uploadBytesResumable } from "firebase/storage";
 import { FirebaseApp } from "./Account";
-import { SlSettings } from "react-icons/sl";
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import formatBytes from "../modules/formatBytes";
+import { FiEdit } from "react-icons/fi";
 
 export interface ProfileData {
     photoSrc: string | null;
@@ -29,8 +30,11 @@ function Profile() {
     const [isCoverPicUploading, setIsCoverPicUploading] = useState(false);
 
     const [ProfilePicUploadingValue, setProfilePicUploadingValue] = useState(0);
-    const [CoverPicUploadingValue, setCoverPicUploadingValue] = useState(0);
+    const [profilePicUploadingDetails, setProfilePicUploadingDetails] = useState<string>("")
 
+
+    const [CoverPicUploadingValue, setCoverPicUploadingValue] = useState(0);
+    const [coverPicUploadingDetails, setCoverPicUploadingDetails] = useState<string>("")
     const profileImageRef = useRef<HTMLInputElement>(null);
     const coverImageRef = useRef<HTMLInputElement>(null);
 
@@ -41,7 +45,6 @@ function Profile() {
     const [coverImage, setCoverImage] = useState<string>(Cover);
     const [isCoverImagePopup, setCoverImagePopup] = useState<boolean>(false);
 
-    const coverImages = [Cover, Cover, Cover];
     const [isFetching, setIsFetching] = useState(false);
     useEffect(() => {
 
@@ -153,6 +156,7 @@ function Profile() {
                         // Get upload progress
                         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                         setProfilePicUploadingValue(progress);
+                        setProfilePicUploadingDetails(`Uploaded ${formatBytes(snapshot.bytesTransferred)} of ${formatBytes(snapshot.totalBytes)} `)
                     },
                     (error) => {
                         // Handle unsuccessful uploads
@@ -261,6 +265,7 @@ function Profile() {
                         // Get upload progress
                         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                         setCoverPicUploadingValue(progress);
+                        setCoverPicUploadingDetails(`Uploaded ${formatBytes(snapshot.bytesTransferred)} of ${formatBytes(snapshot.totalBytes)} `)
                     },
                     (error) => {
                         // Handle unsuccessful uploads
@@ -316,15 +321,14 @@ function Profile() {
                             <div className="border border-default bg-default-100 dark:bg-default-50 rounded-small overflow-hidden shadow-lg shadow-black/20 mt-10 pb-14">
 
                                 {/* Cover Pic */}
-                                <div className="relative overflow-hidden max-h-72 z-20   ">
+                                <div className="relative overflow-hidden max-h-56 z-20   ">
                                     <PhotoProvider>
                                         <PhotoView src={coverImage}>
                                             <Image src={coverImage} radius="none" className="cursor-pointer transition-all hover:brightness-90" />
                                         </PhotoView>
                                     </PhotoProvider>
-                                    <div onClick={() => setCoverImagePopup(true)} className="absolute bottom-5 right-5 z-50 bg-primary text-white sm:py-2 sm:px-3 p-2 text-tiny sm:text-sm flex justify-center items-center gap-x-2 shadow-xl cursor-pointer hover:brightness-125 transition-all">
-                                        <SlSettings size={20} />
-                                        <span>Change</span>
+                                    <div onClick={() => setCoverImagePopup(true)} className="absolute bottom-48  sm:bottom-5 right-5 z-50 bg-primary text-white p-2 sm:p-3 text-tiny sm:text-sm flex justify-center items-center gap-x-2 shadow-xl cursor-pointer hover:brightness-125 transition-all rounded-full">
+                                        <FiEdit size={18} />
                                     </div>
 
                                 </div>
@@ -333,11 +337,12 @@ function Profile() {
                                 <div className="px-4 pb-6 text-center lg:pb-8 xl:pb-11.5">
                                     <div className="relative z-30 mx-auto -mt-24 h-[7.5rem] flex justify-center items-center  w-full max-w-[7.5rem] rounded-full bg-white/20 p-1 backdrop-blur-sm sm:h-[11rem] sm:max-w-[11rem] sm:p-3">
                                         <div className="drop-shadow-md w-24 h-24 sm:h-36 sm:w-36 rounded-full overflow-hidden object-cover flex justify-center items-center">
-                                            <PhotoProvider>
+                                            {!isFetching ? <PhotoProvider>
                                                 <PhotoView src={profileImage}>
                                                     <Image isLoading={isFetching} src={profileImage} radius="full" className="w-full h-full hover:brightness-90  cursor-pointer" alt="profile" />
                                                 </PhotoView>
-                                            </PhotoProvider>
+                                            </PhotoProvider> :
+                                                <Spinner size="lg" color="success" />}
 
                                         </div>
                                         <div
@@ -446,7 +451,9 @@ function Profile() {
                                                         indicator: "stroke-success",
                                                         track: "stroke-default/40",
                                                         value: "text-3xl font-semibold text-success",
+                                                        label: "text-foreground",
                                                     }}
+                                                    label={profilePicUploadingDetails}
                                                     value={ProfilePicUploadingValue}
                                                     strokeWidth={4}
                                                     showValueLabel={true}
@@ -454,7 +461,7 @@ function Profile() {
                                             ) : selectedFileNamePP ? (
                                                 <>
                                                     <div className="w-full">
-                                                        <div className="w-full flex items-center justify-center">
+                                                        <div className="w-full  flex items-center justify-center">
                                                             <IoImage size={40} className="text-default-400 group-hover:text-success transition-colors" />
                                                         </div>
                                                         <span className="ml-2 text-sm break-words group-hover:text-success transition-colors text-default-400">{selectedFileNamePP}</span>
@@ -466,10 +473,10 @@ function Profile() {
                                         </label>
                                     </CardBody>
                                     <CardFooter className="flex-col">
-                                        <span className="text-medium font-mono font-semibold text-danger">
+                                        <span className="text-sm font-mono font-semibold text-danger">
                                             Select Only Image File
                                         </span>
-                                        <span className="text-tiny font-mono font-semibold italic">
+                                        <span className="text-tiny font-mono text-default-600/60  italic">
                                             If you close this popup or reload this page, your upload will be cancelled
                                         </span>
                                     </CardFooter>
@@ -499,51 +506,51 @@ function Profile() {
             {/* Change Cover Image Custom Modal */}
             {isCoverImagePopup &&
                 <div className="bg-background/30 animate-appearance-in flex justify-center items-center backdrop-blur-md fixed top-0 left-0 w-full h-full z-50">
-                    <div className="p-5 bg-default-100 w-[90%] shadow-large relative">
+                    <div className="p-5 bg-default-100 max-w-lg w-[80%] shadow-large relative">
                         <Button onPress={() => setCoverImagePopup(false)} variant="light" className="absolute right-2 top-2" isIconOnly radius="full">
                             <IoCloseCircleOutline size={27} />
                         </Button>
-                        <h1 className="mb-3">Select A Background Image</h1>
-                        <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-                            {
-                                coverImages.map((image, ind) => (
-                                    <div onClick={() => { setCoverImage(image); setCoverImagePopup(false) }} key={image + String(ind)} className="cursor-pointer p-1 transition-all drop-shadow-lg hover:drop-shadow-none"  >
-                                        <Image isZoomed radius="none" src={image} />
-                                    </div>
-                                ))
-                            }
+                        <h1 className="mb-3 text-sm font-bold text-default-600/60">Select Background Image</h1>
 
-                            <Card className="w-full bg-transparent group-hover:bg-foreground-100 dark:group-hover:bg-default-50  shadow-medium h-full">
-                                <CardBody className="p-3 text-small text-default-400">
-                                    <input ref={coverImageRef} className="hidden" type="file" id="upload-pic" onChange={handleCoverPicInputChange} />
-                                    <label htmlFor="upload-pic" className="group cursor-pointer hover:opacity-80 transition-opacity w-full h-full flex justify-center items-center">
-                                        {isCoverPicUploading ? (
-                                            <Progress
-                                                aria-label="Downloading..."
-                                                size="md"
-                                                value={CoverPicUploadingValue}
-                                                color="success"
-                                                showValueLabel={true}
-                                                className="max-w-md"
-                                            />
-                                        ) : selectedFileNameCP ? (
-                                            <>
-                                                <div className="w-full">
-                                                    <div className="w-full flex items-center justify-center">
-                                                        <IoImage size={30} className="text-default-400 group-hover:text-success transition-colors" />
-                                                    </div>
-                                                    <span className="ml-2 text-sm break-words group-hover:text-success transition-colors text-default-400">{selectedFileNameCP}</span>
+
+                        <Card className="w-full bg-transparent group-hover:bg-foreground-100 dark:group-hover:bg-default-50  h-full shadow-none  border-none">
+                            <CardBody className="p-3 text-small text-default-400">
+                                <input ref={coverImageRef} className="hidden" type="file" id="upload-pic" onChange={handleCoverPicInputChange} />
+                                <label htmlFor="upload-pic" className="group cursor-pointer hover:opacity-80 transition-opacity w-full h-full flex justify-center items-center">
+                                    {isCoverPicUploading ? (
+                                        <Progress
+                                            size="sm"
+                                            radius="sm"
+                                            classNames={{
+                                                base: "w-full",
+                                                track: "drop-shadow-md border border-default",
+                                                indicator: "bg-gradient-to-r from-pink-500 to-yellow-500",
+                                                label: "tracking-wider text-tiny sm:text-medium max-w-sm font-medium text-default-600",
+                                                value: "text-foreground/60",
+                                            }}
+                                            label={coverPicUploadingDetails}
+                                            value={CoverPicUploadingValue}
+                                            showValueLabel={true}
+                                        />
+                                    ) : selectedFileNameCP ? (
+                                        <>
+                                            <div className="w-full">
+                                                <div className="w-full flex items-center justify-center">
+                                                    <IoImage size={30} className="text-default-400 group-hover:text-success transition-colors" />
                                                 </div>
-                                            </>
-                                        ) : (
-                                            <IoAddCircle size={40} className="group-hover:text-success" />
-                                        )}
-                                    </label>
-                                    <Button onPress={handleCoverImageUpload} >Upload</Button>
-                                </CardBody>
+                                                <span className="ml-2 text-sm break-words group-hover:text-success transition-colors text-default-400">{selectedFileNameCP}</span>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <IoAddCircle size={40} className="group-hover:text-success" />
+                                    )}
+                                </label>
+                            </CardBody>
+                            <CardFooter className="max-w-md mx-auto">
+                                <Button fullWidth size="sm" variant="flat" onPress={handleCoverImageUpload} >Upload</Button>
 
-                            </Card>
-                        </div>
+                            </CardFooter>
+                        </Card>
                     </div>
 
                 </div>}

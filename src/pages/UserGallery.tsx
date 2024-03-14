@@ -17,6 +17,7 @@ import { twMerge } from "tailwind-merge";
 import { FaFileAudio, FaFileDownload, FaFilePdf, FaPlay, FaVideo } from "react-icons/fa";
 import AudioPlayer from 'react-h5-audio-player';
 import '../react-h5-audio-player.css';
+import formatBytes from "../modules/formatBytes";
 interface Photo {
     src: string;
     filename: string;
@@ -51,13 +52,13 @@ const PhotoCard = memo(({ src, filename, ftype, onDelete }: Photo) => {
                         <FaPlay size={40} className="text-white" />
                     </div>
                 </div>
-                <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="full" className="p-4">
+                <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="full" >
                     <ModalContent>
 
                         {(onClose) => (
                             <>
                                 <ModalBody className="h-full flex justify-center items-center">
-                                    <Player className="h-fit max-w-lg" src={src} />
+                                    <Player className="h-fit max-w-xl" src={src} />
                                 </ModalBody>
                                 <ModalFooter className="flex justify-evenly ">
                                     <p className="text-medium font-bold">{filename}</p>
@@ -193,6 +194,8 @@ function UserGallery() {
     const [selectedFileName, setSelectedFileName] = useState<string>("");
     const [isUploading, setIsUploading] = useState(false);
     const [uploadingValue, setUploadingValue] = useState(0);
+    const [uploadingDetails, setUploadingDetails] = useState<string>("0");
+
     const [showToast, setToast] = useState(false);
     const [toastMsg, setToastMsg] = useState("");
     const navigate = useNavigate();
@@ -267,6 +270,7 @@ function UserGallery() {
                     // Get upload progress
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     setUploadingValue(progress);
+                    setUploadingDetails(`Uploaded ${formatBytes(snapshot.bytesTransferred)} of ${formatBytes(snapshot.totalBytes)} `)
                 },
                 (error) => {
                     // Handle unsuccessful uploads
@@ -429,7 +433,7 @@ function UserGallery() {
                                 <Card className="w-full bg-background group-hover:bg-foreground-100 dark:group-hover:bg-default-50 border-none shadow-none h-full">
                                     <CardBody className="px-3 py-0 text-small text-default-400">
                                         <input ref={imageRef} className="hidden" type="file" id="upload-pic" onChange={handleFileInputChange} />
-                                        <label htmlFor="upload-pic" className="group cursor-pointer hover:opacity-80 transition-opacity w-full h-full flex justify-center items-center">
+                                        <label htmlFor="upload-pic" className={twMerge("group cursor-pointer hover:opacity-80 transition-opacity w-full h-full flex justify-center items-center", isUploading && "pointer-events-none")}>
                                             {isUploading ? (
                                                 <CircularProgress
                                                     classNames={{
@@ -437,8 +441,10 @@ function UserGallery() {
                                                         indicator: "stroke-success",
                                                         track: "stroke-default/40",
                                                         value: "text-3xl font-semibold text-success",
+                                                        label: "text-foreground"
                                                     }}
                                                     value={uploadingValue}
+                                                    label={uploadingDetails}
                                                     strokeWidth={4}
                                                     showValueLabel={true}
                                                 />
@@ -465,20 +471,20 @@ function UserGallery() {
                             </div>
                         </ModalBody>
                         <ModalFooter className="flex justify-center">
-
-                            <div className="flex gap-2 w-full animate-appearance-in">
-                                <Button
-                                    color="success"
-                                    className="bg-foreground text-background"
-                                    radius="sm"
-                                    fullWidth
-                                    size="md"
-                                    variant="solid"
-                                    onPress={handleUploadFile}
-                                >
-                                    Upload
-                                </Button>
-                            </div>
+                            {!isUploading &&
+                                <div className="flex gap-2 w-full animate-appearance-in">
+                                    <Button
+                                        color="success"
+                                        className="bg-foreground text-background"
+                                        radius="sm"
+                                        fullWidth
+                                        size="md"
+                                        variant="solid"
+                                        onPress={handleUploadFile}
+                                    >
+                                        Upload
+                                    </Button>
+                                </div>}
                         </ModalFooter>
 
                     </>

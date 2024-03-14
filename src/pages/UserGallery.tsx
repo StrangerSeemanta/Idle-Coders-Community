@@ -18,6 +18,7 @@ import { FaFileAudio, FaFileDownload, FaFilePdf, FaPlay, FaVideo } from "react-i
 import AudioPlayer from 'react-h5-audio-player';
 import '../react-h5-audio-player.css';
 import formatBytes from "../modules/formatBytes";
+import { collection, doc, getDocs, getFirestore, setDoc } from "firebase/firestore";
 interface Photo {
     src: string;
     filename: string;
@@ -217,11 +218,27 @@ function UserGallery() {
         if (currentUser) {
             setLoading(true)
             try {
+                const db = getFirestore(FirebaseApp)
+                const docRef = await doc(collection(db, "authUserData"), currentUser.uid);
+                const data = {
+                    name: currentUser.displayName,
+                    profilePic: currentUser.photoURL,
+                    email: currentUser.email,
+                    isVerified: currentUser.emailVerified,
+                    phone: currentUser.phoneNumber
+                }
+                await setDoc(docRef, data)
+                const querySnapshot = await getDocs(collection(db, "authUserData"));
+                querySnapshot.forEach((doc) => {
+                    console.log(doc.data());
+                });
+                console.log(docRef.id)
                 const storage = getStorage(FirebaseApp);
                 const storageRef = ref(storage, `storage/${currentUser.uid}`);
                 const res = await listAll(storageRef);
                 const urlsPromises = res.items.map(async (itemRef, index) => {
                     const url = await getDownloadURL(itemRef);
+
                     const metadata = await getMetadata(itemRef);
                     const ftype = await getFileType(itemRef.fullPath);
                     const splittedType = ftype.split('/')[0];

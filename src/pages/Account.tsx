@@ -1,14 +1,14 @@
 import { Button, Checkbox, CheckboxGroup, Divider, Input, Spinner } from '@nextui-org/react'
 import { FormEvent, Fragment, useState } from 'react'
 import { IoIosEye, IoIosEyeOff, IoIosLock, IoIosLogIn, IoIosMail } from "react-icons/io";
-import { FaGithub, FaUserPlus } from "react-icons/fa";
+import { FaFacebook, FaGithub, FaUserPlus } from "react-icons/fa";
 import GoogleIcon from '../Icons/GoogleIcon';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import { MdOutlineDone } from "react-icons/md";
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, FacebookAuthProvider } from "firebase/auth";
 
 
 
@@ -67,6 +67,23 @@ export function LoginPage() {
 
                 navigate("/user/profile")
 
+                setLoginSuccessful(true)
+                setLogging(false)
+
+            }).catch((error) => {
+                console.log(error);
+
+            });
+    }
+
+    const FaceBookSignIn = () => {
+        signInWithPopup(auth, new FacebookAuthProvider())
+            .then(() => {
+
+                navigate("/user/profile")
+
+                setLoginSuccessful(true)
+                setLogging(false)
 
             }).catch((error) => {
                 console.log(error);
@@ -105,9 +122,15 @@ export function LoginPage() {
                         Continue With Google
                     </span>
                 </div>
-                <Divider orientation='vertical' />
+                <div onClick={FaceBookSignIn} className='hidden select-none w-full transition-colors rounded-md  active:bg-default-200  hover:bg-default-100 cursor-pointer text-tiny border-1 border-divider p-6  flex-col items-center justify-end gap-3 shadow-medium'>
+                    <FaFacebook size={30} className="text-primary" />
+                    <span>
+                        Continue With Facebook
+                    </span>
+                </div>
+
                 <div onClick={githubSignIn} className='select-none w-full transition-colors rounded-md  active:bg-default-200  hover:bg-default-100 cursor-pointer text-tiny border-1 border-divider p-6 flex flex-col items-center justify-end gap-3 shadow-medium'>
-                    <FaGithub size={25} className="text-foreground" />
+                    <FaGithub size={30} className="text-foreground" />
                     <span>
                         Continue With Github
                     </span>

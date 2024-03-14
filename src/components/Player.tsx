@@ -84,6 +84,7 @@ function Player({ poster, src, className, height }: Props) {
             }
         }
     }, [fullScr])
+
     return (
         <Fragment>
             <div style={{ height: height }} className={twMerge("relative w-full h-fit bg-black  ", className)} >

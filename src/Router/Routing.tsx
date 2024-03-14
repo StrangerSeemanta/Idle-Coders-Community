@@ -12,6 +12,7 @@ import { SubscribeForm } from "../components/Intro";
 import UserGallery from "../pages/UserGallery";
 import UserDashboard from "../pages/UserDashboard";
 import Profile from "../pages/Profile";
+import PrivacyPolicyPage from "../pages/PrivacyPolicyPage";
 
 
 const Routing =
@@ -85,6 +86,11 @@ const Routing =
         title: "Contact With Us ",
         path: 'contact',
         element: <Contact />
+    },
+    "privacy_policy": {
+        title: "Privacy Policy of IdleCoders ",
+        path: 'privacy_policy',
+        element: <PrivacyPolicyPage />
     },
     "Subscribe": {
         title: "Contact With Us ",

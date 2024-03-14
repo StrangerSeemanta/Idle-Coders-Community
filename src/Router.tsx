@@ -77,7 +77,13 @@ function Router() {
               {Routing.ContactPage.element}
             </HeadPolish>
           } />
-
+        <Route
+          path={Routing.privacy_policy.path}
+          element={
+            <HeadPolish title={Routing.privacy_policy.title}>
+              {Routing.privacy_policy.element}
+            </HeadPolish>
+          } />
         <Route
           path={Routing.Subscribe.path}
           element={

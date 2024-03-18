@@ -1,28 +1,30 @@
 import { Fragment, memo, useCallback, useEffect, useRef, useState } from "react";
 import { Card, CardBody, CardFooter, CircularProgress, Input, Modal, ModalBody, ModalContent, ModalFooter, useDisclosure, } from "@nextui-org/react";
-import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import { getStorage, ref, listAll, getDownloadURL, getMetadata, deleteObject, uploadBytesResumable } from "firebase/storage";
 import { Button } from "@nextui-org/react";
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { IoAddCircle, IoImage, IoSearch } from "react-icons/io5";
+import { IoAddCircle, IoImage, IoImageSharp, IoSearch } from "react-icons/io5";
 import { FirebaseApp } from "./Account";
 import Toast from "../components/Toast";
 import { getFileType } from "../modules/getUserDetails";
-import { IoIosDownload, IoMdRemoveCircle } from "react-icons/io";
+import { IoMdRemoveCircle } from "react-icons/io";
 import { FilterButton } from "./Projects";
 import { twMerge } from "tailwind-merge";
-import { FaFileAudio, FaFileDownload, FaFilePdf, FaPlay, FaVideo } from "react-icons/fa";
-import AudioPlayer from 'react-h5-audio-player';
+import { FaFileAudio, FaFilePdf, FaPlay, FaVideo } from "react-icons/fa";
 import '../react-h5-audio-player.css';
 import formatBytes from "../modules/formatBytes";
-import { createUserStorageDocument, deleteUserStorageDocument } from "../modules/manageStorageDatabase";
-import { TokenizingProps, detokenize, tokenize } from "../modules/tokenize";
+import { createUserStorageDocument, deleteUserStorageDocument, readUserStorageDocument } from "../modules/manageStorageDatabase";
+import { TokenizingProps, tokenize } from "../modules/tokenize";
 import PageLoader from "./PageLoader";
+import { LuExternalLink } from "react-icons/lu";
+import { TbFileUnknown } from "react-icons/tb";
+
 export interface StorageFileDataProps {
     src: string;
     filename: string;
+    originalName: string;
     ftype: string;
     onDelete?: () => void;
     docToken: TokenizingProps;
@@ -30,8 +32,7 @@ export interface StorageFileDataProps {
 // Import necessary components and functions
 
 // Define the PhotoCard component
-const PhotoCard = memo(({ src, filename, ftype, onDelete, docToken }: StorageFileDataProps) => {
-    const { isOpen, onOpenChange, onOpen } = useDisclosure()
+const PhotoCard = memo(({ filename, ftype, onDelete, docToken }: StorageFileDataProps) => {
     const navigate = useNavigate()
     // Define the Preview component
     const Preview = () => {
@@ -42,17 +43,18 @@ const PhotoCard = memo(({ src, filename, ftype, onDelete, docToken }: StorageFil
 
         if (ftype.includes("image/")) {
             return (
-                <PhotoProvider>
-                    <PhotoView src={src}>
-                        <img className="object-contain cursor-zoom-in h-[30vh]" src={src} />
-                    </PhotoView>
-                </PhotoProvider>
+                <div className="w-full h-[30vh] flex cursor-pointer  justify-center items-center">
+                    <IoImageSharp size={55} className="text-success group-hover:hidden animate-appearance-in" />
+                    <div className="animate-appearance-in p-3 hover:brightness-110 rounded-full justify-center items-center bg-success shadow-medium shadow-black/30 hidden group-hover:flex">
+                        <LuExternalLink size={40} className="text-white" />
+                    </div>
+                </div>
             );
         } else if (ftype.includes("video/")) { // Corrected variable name
             return <>
-                <div onClick={() => navigate(`play/${(docToken.tokenizedString)}`)} className="w-full h-[30vh] flex cursor-pointer  justify-center items-center">
-                    <FaVideo size={50} className="text-success group-hover:hidden" />
-                    <div className="p-3 hover:brightness-110 rounded-full justify-center items-center bg-success shadow-medium shadow-black/30 hidden group-hover:flex">
+                <div className="w-full h-[30vh] flex cursor-pointer  justify-center items-center">
+                    <FaVideo size={55} className="text-success group-hover:hidden animate-appearance-in" />
+                    <div className="animate-appearance-in p-3 hover:brightness-110 rounded-full justify-center items-center bg-success shadow-medium shadow-black/30 hidden group-hover:flex">
                         <FaPlay size={40} className="text-white" />
                     </div>
                 </div>
@@ -60,91 +62,32 @@ const PhotoCard = memo(({ src, filename, ftype, onDelete, docToken }: StorageFil
             </>;
         } else if (ftype.includes("application/pdf")) {
             return (
-                <div onClick={onOpen} className="w-full h-[30vh] flex cursor-pointer  justify-center items-center">
-                    <FaFilePdf size={60} className="text-danger" />
-                    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="full" className="p-4">
-                        <ModalContent>
-
-                            {(onClose) => (
-                                <>
-                                    <ModalBody className="h-full">
-
-
-                                        <iframe src={src} width={"100%"} className="h-full mx-auto" />
-
-                                    </ModalBody>
-                                    <ModalFooter className="flex justify-evenly ">
-                                        <p className="text-medium font-bold">{filename}</p>
-                                        <Button onPress={onClose} radius="sm" variant="ghost" color="danger">Close</Button></ModalFooter>
-
-                                </>
-                            )}
-                        </ModalContent>
-                    </Modal>
+                <div className="w-full h-[30vh] flex cursor-pointer  justify-center items-center">
+                    <FaFilePdf size={55} className="text-success group-hover:hidden animate-appearance-in" />
+                    <div className="animate-appearance-in p-3 hover:brightness-110 rounded-full justify-center items-center bg-success shadow-medium shadow-black/30 hidden group-hover:flex">
+                        <LuExternalLink size={40} className="text-white" />
+                    </div>
                 </div>
 
             )// If file type is application (e.g., PDF), render document icon
         } else if (ftype.includes("audio/")) {
             return (
-                <div onClick={onOpen} className="w-full h-[30vh] flex cursor-pointer  justify-center items-center">
-                    <FaFileAudio size={60} className="text-danger" />
-                    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="full" className="p-4">
-                        <ModalContent>
-
-                            {(onClose) => (
-                                <>
-                                    <ModalBody className="h-full flex justify-center items-center">
-                                        <>
-                                            <AudioPlayer
-                                                autoPlay={false}
-
-                                                className=" max-w-lg rounded-medium "
-                                                volume={.5}
-                                                src={src}
-                                                onPlay={e => console.log("onPlay ", e)}
-                                            // other props here
-                                            />
-                                        </>
-                                    </ModalBody>
-                                    <ModalFooter className="flex justify-evenly ">
-                                        <p className="text-medium font-bold">{filename}</p>
-                                        <Button onPress={onClose} radius="sm" variant="ghost" color="danger">Close</Button></ModalFooter>
-
-                                </>
-                            )}
-                        </ModalContent>
-                    </Modal>
+                <div className="w-full h-[30vh] flex cursor-pointer  justify-center items-center">
+                    <FaFileAudio size={55} className="text-success group-hover:hidden animate-appearance-in" />
+                    <div className="animate-appearance-in p-3 hover:brightness-110 rounded-full justify-center items-center bg-success shadow-medium shadow-black/30 hidden group-hover:flex">
+                        <FaPlay size={40} className="text-white" />
+                    </div>
                 </div>
 
             )// If file type is application (e.g., PDF), render document icon
         }
         else {
             return (
-                <div onClick={onOpen} className="w-full h-[30vh] flex cursor-pointer  justify-center items-center">
-                    <FaFileDownload size={60} className="text-danger" />
-                    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="full" className="p-4">
-                        <ModalContent>
-
-                            {(onClose) => (
-                                <>
-                                    <ModalBody className="h-full">
-
-                                        <>
-                                            <iframe src={src} className="hidden mx-auto" />
-                                            <h1 className="w-full h-full text-3xl flex gap-2 justify-center items-center">
-                                                <IoIosDownload size={40} />
-                                                Download This File To Open</h1>
-                                        </>
-
-                                    </ModalBody>
-                                    <ModalFooter className="flex justify-evenly ">
-                                        <p className="text-medium font-bold">{filename}</p>
-                                        <Button onPress={onClose} radius="sm" variant="ghost" color="danger">Close</Button></ModalFooter>
-
-                                </>
-                            )}
-                        </ModalContent>
-                    </Modal>
+                <div className="w-full h-[30vh] flex cursor-pointer  justify-center items-center">
+                    <TbFileUnknown size={55} className="text-success group-hover:hidden animate-appearance-in" />
+                    <div className="animate-appearance-in p-3 hover:brightness-110 rounded-full justify-center items-center bg-success shadow-medium shadow-black/30 hidden group-hover:flex">
+                        <LuExternalLink size={40} className="text-white" />
+                    </div>
                 </div>
 
             ); // If file type is not supported, return null
@@ -166,7 +109,10 @@ const PhotoCard = memo(({ src, filename, ftype, onDelete, docToken }: StorageFil
                     </Button>
                 </div>
                 {Preview
-                    && <Preview />
+                    &&
+                    <div onClick={() => navigate(`play/${docToken.tokenizedString}`)}>
+                        <Preview />
+                    </div>
                 }
             </div>
 
@@ -217,22 +163,37 @@ function UserGallery() {
                     const metadata = await getMetadata(itemRef);
                     const ftype = await getFileType(itemRef.fullPath);
                     const splittedType = ftype.split('/')[0];
-                    const tokens = tokenize(metadata.name)
+                    const tokens = tokenize(metadata.name);
+                    const documents = await readUserStorageDocument();
+                    const matchedDocument = documents?.find((doc) => {
+                        return doc.id === metadata.name;
+
+                    })
+
+                    const fileNameFromDB = matchedDocument?.data().fileName;
+
                     // DATABASE> USERS > USERS.UID> Create Collection "storageData"
                     const UserStorageDataFields = {
-                        fileName: metadata.name,
+                        fileName: fileNameFromDB ? fileNameFromDB : metadata.name,
+                        originalFileName: metadata.name,
                         fileSrc: url,
                         fileType: ftype,
                         fileSize: metadata.size,
                         fileUploadTime: metadata.timeCreated,
                         tokens: tokens,
-                        detoken: detokenize(tokens.tokenizedString, tokens.token)
                     };
                     await createUserStorageDocument(metadata.name, UserStorageDataFields);
 
-
                     setFilterKeys((prev) => !prev.includes(splittedType) ? [...prev, splittedType] : [...prev])
-                    return { id: index, title: `Item ${index + 1}`, src: url, filename: metadata.name, ftype: ftype, docToken: tokens };
+                    return {
+                        id: index,
+                        title: `Item ${index + 1}`,
+                        src: url,
+                        filename: fileNameFromDB ? fileNameFromDB : metadata.name,
+                        originalName: metadata.name,
+                        ftype: ftype,
+                        docToken: tokens
+                    };
                 });
                 const photoData = await Promise.all(urlsPromises);
                 setPhotos(photoData);
@@ -318,7 +279,7 @@ function UserGallery() {
                 const storageRef = ref(storage, url); // Replace 'storage' with your Firebase Storage instance
                 await deleteObject(storageRef);
             } catch (e) {
-
+                setLoading(false)
                 throw new Error("Operation Failed");
 
             }
@@ -415,7 +376,7 @@ function UserGallery() {
                             {filterPhotos(photos).map((photo, index) => (
                                 <PhotoCard
                                     key={index}
-                                    onDelete={() => handleDelete(photo.filename)}
+                                    onDelete={() => handleDelete(photo.originalName)}
                                     {...photo}
                                 />
                             ))}

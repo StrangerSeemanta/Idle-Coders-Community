@@ -82,14 +82,15 @@ export function tokenize(string: string): TokenizingProps {
   const base30token = Math.random().toString(36).substring(2);
   const token = base30token;
   const splitted = string.split(/\s+|_/).slice(0, 3);
-  const tokenizedString = base64Encode(splitted.join(token));
+  const tokenizedString = splitted.map((str) => base64Encode(str)).join(token);
 
   return { token, tokenizedString };
 }
 
 export function detokenize(tokenizedString: string, token: string): string {
-  const decodedTokenizedString = base64Decode(tokenizedString)
+  const decodedTokenizedString = tokenizedString
     .split(token)
+    .map((encstr) => base64Decode(encstr))
     .join(" ");
   return decodedTokenizedString;
 }

@@ -122,6 +122,13 @@ function Router() {
               </HeadPolish>
             }
           />
+          {/* Dynamic Video Player Page */}
+          <Route
+            path={Routing.UserDashboard.VideoPlayerPage.path}
+            element={
+              Routing.UserDashboard.VideoPlayerPage.element
+            }
+          />
         </Route>
         {/* Nested Routing For Profile Navigation End*/}
 

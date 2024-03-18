@@ -3,14 +3,13 @@ import { Card, CardBody, CardFooter, CircularProgress, Input, Modal, ModalBody, 
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import { getStorage, ref, listAll, getDownloadURL, getMetadata, deleteObject, uploadBytesResumable } from "firebase/storage";
-import { Button, Spinner } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { IoAddCircle, IoImage, IoSearch } from "react-icons/io5";
 import { FirebaseApp } from "./Account";
 import Toast from "../components/Toast";
 import { getFileType } from "../modules/getUserDetails";
-import Player from "../components/Player";
 import { IoIosDownload, IoMdRemoveCircle } from "react-icons/io";
 import { FilterButton } from "./Projects";
 import { twMerge } from "tailwind-merge";
@@ -18,18 +17,22 @@ import { FaFileAudio, FaFileDownload, FaFilePdf, FaPlay, FaVideo } from "react-i
 import AudioPlayer from 'react-h5-audio-player';
 import '../react-h5-audio-player.css';
 import formatBytes from "../modules/formatBytes";
-import { collection, doc, getDocs, getFirestore, setDoc } from "firebase/firestore";
-interface Photo {
+import { createUserStorageDocument, deleteUserStorageDocument } from "../modules/manageStorageDatabase";
+import { TokenizingProps, detokenize, tokenize } from "../modules/tokenize";
+import PageLoader from "./PageLoader";
+export interface StorageFileDataProps {
     src: string;
     filename: string;
     ftype: string;
     onDelete?: () => void;
+    docToken: TokenizingProps;
 }
 // Import necessary components and functions
 
 // Define the PhotoCard component
-const PhotoCard = memo(({ src, filename, ftype, onDelete }: Photo) => {
+const PhotoCard = memo(({ src, filename, ftype, onDelete, docToken }: StorageFileDataProps) => {
     const { isOpen, onOpenChange, onOpen } = useDisclosure()
+    const navigate = useNavigate()
     // Define the Preview component
     const Preview = () => {
 
@@ -47,28 +50,13 @@ const PhotoCard = memo(({ src, filename, ftype, onDelete }: Photo) => {
             );
         } else if (ftype.includes("video/")) { // Corrected variable name
             return <>
-                <div onClick={onOpen} className="w-full h-[30vh] flex cursor-pointer  justify-center items-center">
+                <div onClick={() => navigate(`play/${(docToken.tokenizedString)}`)} className="w-full h-[30vh] flex cursor-pointer  justify-center items-center">
                     <FaVideo size={50} className="text-success group-hover:hidden" />
                     <div className="p-3 hover:brightness-110 rounded-full justify-center items-center bg-success shadow-medium shadow-black/30 hidden group-hover:flex">
                         <FaPlay size={40} className="text-white" />
                     </div>
                 </div>
-                <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="full" >
-                    <ModalContent>
 
-                        {(onClose) => (
-                            <>
-                                <ModalBody className="h-full flex justify-center items-center">
-                                    <Player className="h-fit max-w-xl" src={src} />
-                                </ModalBody>
-                                <ModalFooter className="flex justify-evenly ">
-                                    <p className="text-medium font-bold">{filename}</p>
-                                    <Button onPress={onClose} radius="sm" variant="ghost" color="danger">Close</Button></ModalFooter>
-
-                            </>
-                        )}
-                    </ModalContent>
-                </Modal>
             </>;
         } else if (ftype.includes("application/pdf")) {
             return (
@@ -168,7 +156,7 @@ const PhotoCard = memo(({ src, filename, ftype, onDelete }: Photo) => {
     // Render the PhotoCard component
     return (
         <>
-            <div className="group hover:bg-foreground-100 dark:hover:bg-default-50 transition-colors animate-appearance-in p-4 flex flex-col justify-center items-center gap-5 shadow-lg shadow-black/10 h-[50vh] rounded-medium border-default border-1">
+            <div className="group dark:bg-primary-50/60 hover:bg-foreground-100 dark:hover:bg-primary-50 transition-colors animate-appearance-in p-4 flex flex-col justify-center items-center gap-5 shadow-medium mt-3 shadow-black/10 h-[50vh] rounded-medium border-default border-1">
                 <div className="w-full flex justify-between">
                     <div className="overflow-hidden">
                         <h1 className="text-sm w-full">{filename}</h1>
@@ -177,8 +165,10 @@ const PhotoCard = memo(({ src, filename, ftype, onDelete }: Photo) => {
                         <IoMdRemoveCircle className="text-danger" size={20} />
                     </Button>
                 </div>
-                {Preview && <Preview />
-                }            </div>
+                {Preview
+                    && <Preview />
+                }
+            </div>
 
 
         </>
@@ -189,7 +179,7 @@ const PhotoCard = memo(({ src, filename, ftype, onDelete }: Photo) => {
 function UserGallery() {
     // State variables
     const [loading, setLoading] = useState(false);
-    const [photos, setPhotos] = useState<Photo[]>([]);
+    const [photos, setPhotos] = useState<StorageFileDataProps[]>([]);
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const imageRef = useRef<HTMLInputElement>(null);
     const [selectedFileName, setSelectedFileName] = useState<string>("");
@@ -218,21 +208,6 @@ function UserGallery() {
         if (currentUser) {
             setLoading(true)
             try {
-                const db = getFirestore(FirebaseApp)
-                const docRef = await doc(collection(db, "authUserData"), currentUser.uid);
-                const data = {
-                    name: currentUser.displayName,
-                    profilePic: currentUser.photoURL,
-                    email: currentUser.email,
-                    isVerified: currentUser.emailVerified,
-                    phone: currentUser.phoneNumber
-                }
-                await setDoc(docRef, data)
-                const querySnapshot = await getDocs(collection(db, "authUserData"));
-                querySnapshot.forEach((doc) => {
-                    console.log(doc.data());
-                });
-                console.log(docRef.id)
                 const storage = getStorage(FirebaseApp);
                 const storageRef = ref(storage, `storage/${currentUser.uid}`);
                 const res = await listAll(storageRef);
@@ -242,12 +217,32 @@ function UserGallery() {
                     const metadata = await getMetadata(itemRef);
                     const ftype = await getFileType(itemRef.fullPath);
                     const splittedType = ftype.split('/')[0];
+                    const tokens = tokenize(metadata.name)
+                    // DATABASE> USERS > USERS.UID> Create Collection "storageData"
+                    const UserStorageDataFields = {
+                        fileName: metadata.name,
+                        fileSrc: url,
+                        fileType: ftype,
+                        fileSize: metadata.size,
+                        fileUploadTime: metadata.timeCreated,
+                        tokens: tokens,
+                        detoken: detokenize(tokens.tokenizedString, tokens.token)
+                    };
+                    await createUserStorageDocument(metadata.name, UserStorageDataFields);
+
+
                     setFilterKeys((prev) => !prev.includes(splittedType) ? [...prev, splittedType] : [...prev])
-                    return { id: index, title: `Item ${index + 1}`, src: url, filename: metadata.name, ftype: ftype };
+                    return { id: index, title: `Item ${index + 1}`, src: url, filename: metadata.name, ftype: ftype, docToken: tokens };
                 });
                 const photoData = await Promise.all(urlsPromises);
                 setPhotos(photoData);
                 setLoading(false);
+
+
+
+
+
+
             } catch (error) {
                 console.error("Error fetching photos:", error);
                 setLoading(false);
@@ -314,12 +309,12 @@ function UserGallery() {
     };
 
     // Handle File Delete
-    const deleteFile = async (filePath: string) => {
+    const deleteFile = async (fileName: string) => {
         if (currentUser) {
             setLoading(true)
             try {
                 const storage = getStorage(FirebaseApp)
-                const url = `storage/${currentUser.uid}/${filePath}`
+                const url = `storage/${currentUser.uid}/${fileName}`
                 const storageRef = ref(storage, url); // Replace 'storage' with your Firebase Storage instance
                 await deleteObject(storageRef);
             } catch (e) {
@@ -332,10 +327,11 @@ function UserGallery() {
         }
     };
 
-    const handleDelete = (filePath: string) => {
-        deleteFile(filePath).then(() => {
+    const handleDelete = (fileName: string) => {
+        deleteFile(fileName).then(async () => {
+            await deleteUserStorageDocument(fileName)
             setToast(true);
-            setToastMsg("File Deleted ");
+            setToastMsg("File Removed. ");
             fetchPhotos()
         }).catch(e => {
             setToast(true);
@@ -346,7 +342,7 @@ function UserGallery() {
 
     }
     // Function to filter photos based on selected filter and search query
-    const filterPhotos = (photos: Photo[]): Photo[] => {
+    const filterPhotos = (photos: StorageFileDataProps[]): StorageFileDataProps[] => {
         const filteredPhotos = photos.filter((photo) => {
             // Filter by selected chips
             const type = photo.ftype.split("/").length > 0 ? photo.ftype.split('/')[0] : photo.ftype;
@@ -381,7 +377,7 @@ function UserGallery() {
             <div className="my-4 px-4">
                 <h1 className="text-3xl font-bold "><span className="">Storage</span> <span className="text-default-500">- Store Whatever You Want</span></h1>
             </div>
-            <div className="bg-default-50 backdrop-saturate-150 backdrop-blur-lg z-50 flex flex-col-reverse  lg:flex-row items-start lg:items-center  lg:justify-between mb-4 p-3 w-full">
+            <div className="bg-default-100 dark:bg-primary-50 shadow-medium backdrop-saturate-150 backdrop-blur-lg z-50 flex flex-col-reverse  lg:flex-row items-start lg:items-center  lg:justify-between mb-4 p-3 w-full">
                 <div className="relative flex items-center gap-3 overflow-x-auto w-full lg:w-2/3 cscroll pb-3 mr-4">
                     {filterKeys.map((name, index) => (
                         <FilterButton
@@ -407,7 +403,7 @@ function UserGallery() {
             {
                 loading ? (
                     <div className="h-[70vh] w-full flex justify-center items-center">
-                        <Spinner size="lg" color="success" label="Processing Your Items ..." />
+                        <PageLoader label="Processing Your Items ..." />
                     </div>
                 ) : currentUser ? (
                     <>
@@ -419,10 +415,8 @@ function UserGallery() {
                             {filterPhotos(photos).map((photo, index) => (
                                 <PhotoCard
                                     key={index}
-                                    ftype={photo.ftype}
-                                    filename={photo.filename}
-                                    src={photo.src}
                                     onDelete={() => handleDelete(photo.filename)}
+                                    {...photo}
                                 />
                             ))}
 

@@ -1,14 +1,17 @@
 import { Button, Slider, SliderValue, Spinner } from "@nextui-org/react";
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, HTMLAttributes, forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import getVideoDuration from "../modules/getVideoDuration";
 import { twMerge } from "tailwind-merge";
-interface Props {
+
+interface PlayerProps extends HTMLAttributes<HTMLVideoElement> {
     poster?: string;
     src: string;
     className?: string;
     height?: string | number;
 }
-function Player({ poster, src, className, height }: Props) {
+
+
+const Player = forwardRef<HTMLDivElement | null, PlayerProps>(({ src, height, className, poster, ...props }, ref) => {
     const videoRef = useRef<HTMLVideoElement>(null)
     const [volume, setVolume] = useState<SliderValue>(50);
     const [muted, setMuted] = useState(false);
@@ -74,11 +77,9 @@ function Player({ poster, src, className, height }: Props) {
         if (videoRef.current) {
             if (fullScr) {
                 videoRef.current.parentElement?.requestFullscreen();
-                videoRef.current.classList?.toggle('video_nonFullScr');
             } else if (!fullScr) {
                 if (document.fullscreenElement) {
                     document.exitFullscreen();
-                    videoRef.current.classList?.toggle('video_nonFullScr');
 
                 }
             }
@@ -87,7 +88,7 @@ function Player({ poster, src, className, height }: Props) {
 
     return (
         <Fragment>
-            <div style={{ height: height }} className={twMerge("relative w-full h-fit bg-black  ", className)} >
+            <div ref={ref} style={{ height: height }} className={twMerge("relative w-full h-fit bg-black overflow-hidden rounded-small ", className)} >
                 <div onMouseEnter={() => { setHideControls(false) }} onMouseLeave={handleHideControls} style={{ opacity: hideControls ? 0 : 1, transitionDelay: hideControls ? "2500ms" : "0ms", transitionDuration: hideControls ? "450ms" : "50ms" }} className="flex flex-col video_controls transition-all ease-soft-spring   absolute z-30 bottom-0 left-0 w-full  max-h-[20vh] bg-gradient-to-t  to-00% from-black  to-black/10 px-2 p-1 backdrop-blur-sm">
                     <Slider
                         aria-label="Volume"
@@ -201,22 +202,37 @@ function Player({ poster, src, className, height }: Props) {
                     </div>
 
                 </div>
-                <video onLoadedData={() => { setVideoLoading(false) }} onPlaying={() => { setVideoLoading(false) }} onWaiting={() => { setVideoLoading(true) }} onContextMenu={(event) => { event.preventDefault(); }} onDoubleClick={() => setFullScr(!fullScr)} onClick={() => { setPlaying(!isPlaying) }} ref={videoRef} muted={muted} poster={poster} src={src} contextMenu="false" controlsList="nodownload" className="h-full w-full video_nonFullScr"></video>
+                <video
+                    onLoadedData={() => { setVideoLoading(false) }}
+                    onPlaying={() => { setVideoLoading(false) }}
+                    onWaiting={() => { setVideoLoading(true) }}
+                    onContextMenu={(event) => { event.preventDefault(); }}
+                    onDoubleClick={() => setFullScr(!fullScr)}
+                    onClick={() => { setPlaying(!isPlaying) }}
+                    ref={videoRef}
+                    muted={muted}
+                    poster={poster}
+                    src={src}
+                    contextMenu="false"
+                    controlsList="nodownload"
+                    className="h-full w-full"
+                    aria-label="hidden-video"
+                    {...props}
+                />
 
                 <div className={" absolute z-40 top-10 left-1/2 -translate-x-[50%] -translate-y-[50%] transition-all ease-soft-spring duration-500 " + (isSeeking ? "opacity-100 scale-100 visible" : "opacity-0 scale-150 invisible")}>
                     <h3 className="text-2xl rounded-full bg-danger backdrop-blur-sm px-2 py-1 font-bold text-white  ">{getVideoDuration(length)}</h3>
                 </div>
 
-                {isVideoLoading && <div className={" bg-default-300/40 backdrop-blur-sm px-2 py-2 w-20 h-20 flex justify-center items-center absolute z-40 top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] transition-all ease-soft-spring duration-500 "}>
-                    <h3 className="text-2xl  font-bold text-background rounded-full  ">
-                        <Spinner aria-label="loader" color="danger" />
-                    </h3>
-                </div>}
+                {isVideoLoading &&
+                    <div className={" bg-black/40 rounded-md border border-danger/40 border-double backdrop-blur-sm px-2 py-2 w-20 h-20 flex justify-center items-center absolute z-40 top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] transition-all ease-soft-spring duration-500 "}>
+                        <Spinner aria-label="loader" classNames={{ wrapper: "w-12 h-12" }} size="lg" color="danger" />
+                    </div>}
 
             </div>
 
         </Fragment >
     )
 }
-
+)
 export default Player

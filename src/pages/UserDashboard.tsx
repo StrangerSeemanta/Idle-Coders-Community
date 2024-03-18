@@ -1,4 +1,4 @@
-import { Avatar, Button, Divider, Spinner, User as UserComponent } from "@nextui-org/react";
+import { Avatar, Button, Divider, User as UserComponent } from "@nextui-org/react";
 import { Fragment, ReactNode, useEffect, useMemo, useState } from "react";
 import { FiUser } from "react-icons/fi";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -10,6 +10,7 @@ import { User, getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { FirebaseApp } from "./Account";
 import { RiDatabase2Line } from "react-icons/ri";
 import Toast from "../components/Toast";
+import PageLoader from "./PageLoader";
 interface SidebarProps {
     children: ReactNode;
     className?: string | string[];
@@ -80,7 +81,7 @@ function UserSidebar({ className, children }: SidebarProps) {
             {
                 loading ?
                     <div className="h-screen w-full flex justify-center items-center" >
-                        <Spinner size="lg" color="success" label="Loading..." />
+                        <PageLoader label="Loading..." />
                     </div>
                     : currentUser ? <>
                         < div className='w-full  h-[89vh] flex flex-col sm:flex-row bg-default-50/60 ' >
@@ -110,7 +111,7 @@ function UserSidebar({ className, children }: SidebarProps) {
 
                                                 key={route.label + String(index)}
                                                 isActiveClass={"bg-success dark:bg-default-200 text-white"}
-                                                isActive={location.pathname === route.href}
+                                                isActive={location.pathname.includes(route.href)}
                                                 {...route}
                                             />
                                         ))

@@ -27,10 +27,11 @@ export const downloadFile = (url: string) => {
   anchor.download = url;
   anchor.click();
 };
+
 export const getProfilePicture = async () => {
+  // Get Auth
   const auth = getAuth(FirebaseApp);
   const user = auth.currentUser;
-
   if (user) {
     try {
       const storage = getStorage(FirebaseApp);
@@ -46,5 +47,7 @@ export const getProfilePicture = async () => {
     } catch (error) {
       throw new Error("Failed To Fetch Profile Picture");
     }
+  } else {
+    console.error("no user found");
   }
 };

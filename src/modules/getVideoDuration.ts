@@ -1,20 +1,20 @@
 export default function getVideoDuration(seconds: number) {
-  let time = {
+  const time = {
     decimal: 0,
     seconds: 0,
     min: 0,
     hours: 0,
   };
 
-  let hours = seconds / 3600;
+  const hours = seconds / 3600;
   time.hours = Math.floor(hours);
   time.decimal = hours - time.hours;
 
-  let min = time.decimal * 60;
+  const min = time.decimal * 60;
   time.min = Math.floor(min);
   time.decimal = min - time.min;
 
-  let sec = time.decimal * 60;
+  const sec = time.decimal * 60;
   time.seconds = Math.floor(sec);
   time.decimal = sec - time.seconds;
   let result;

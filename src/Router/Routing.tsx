@@ -13,6 +13,7 @@ import UserGallery from "../pages/UserGallery";
 import UserDashboard from "../pages/UserDashboard";
 import Profile from "../pages/Profile";
 import PrivacyPolicyPage from "../pages/PrivacyPolicyPage";
+import DynamicVideoPlayerPage from "../pages/DynamicVideoPlayerPage";
 
 
 const Routing =
@@ -79,6 +80,11 @@ const Routing =
             title: "One Place All You Need To Store -IdleCoders ",
             path: '/user/storage',
             element: <UserGallery />
+        },
+        "VideoPlayerPage": {
+            title: "",
+            path: "/user/storage/play/:fileURL",
+            element: <DynamicVideoPlayerPage />
         },
     },
 
